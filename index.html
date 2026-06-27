@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sell Your House Fast In Richmond, VA | Good Life Property Group</title>
+  <meta name="description" content="Need to sell your house fast in Richmond, VA? We buy houses as-is for cash. No agents, no fees, no repairs. Fair cash offers within 24 hours. Call (804) 589-5300." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:      #1D3557;
+      --navy-dk:   #152840;
+      --orange:    #E8A020;
+      --orange-dk: #CF8C18;
+      --white:     #FFFFFF;
+      --gray-100:  #F5F6F8;
+      --gray-200:  #E5E7EB;
+      --gray-300:  #D1D5DB;
+      --gray-500:  #6B7280;
+      --gray-700:  #374151;
+      --gray-900:  #111827;
+      --green:     #22C55E;
+      --red:       #EF4444;
+      --font:      'Open Sans', sans-serif;
+      --radius:    4px;
+      --shadow:    0 2px 16px rgba(0,0,0,0.09);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); color: var(--gray-900); background: var(--white); line-height: 1.6; font-size: 15px; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── BUTTONS ── */
+    .btn-orange {
+      display: inline-block; background: var(--orange); color: var(--white);
+      font-family: var(--font); font-weight: 800; font-size: 0.92rem;
+      padding: 13px 24px; border-radius: var(--radius); border: none;
+      cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase;
+      transition: background .2s; white-space: nowrap;
+    }
+    .btn-orange:hover { background: var(--orange-dk); }
+
+    /* ── TOP BAR ── */
+    .topbar { background: var(--navy); padding: 9px 0; }
+    .topbar-inner { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .topbar-text { color: var(--white); font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
+    .topbar input {
+      padding: 8px 13px; border: none; border-radius: var(--radius);
+      font-family: var(--font); font-size: 0.88rem; width: 190px; outline: none;
+    }
+
+    /* ── TOP NAV (navy strip) ── */
+    .topnav { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.12); }
+    .topnav-inner {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 10px 0; gap: 20px;
+    }
+    .topnav-links { display: flex; gap: 20px; list-style: none; }
+    .topnav-links a {
+      font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.85);
+      text-decoration: underline; text-underline-offset: 2px;
+      transition: color .2s;
+    }
+    .topnav-links a:hover { color: var(--white); }
+    .topnav-phone { font-weight: 700; font-size: 1rem; color: var(--white); }
+    .topnav-social { display: flex; gap: 8px; }
+    .topnav-social a {
+      width: 28px; height: 28px; border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-size: 0.72rem; font-weight: 700; transition: border-color .2s, background .2s;
+    }
+    .topnav-social a:hover { border-color: var(--white); background: rgba(255,255,255,0.1); }
+
+    /* ── MAIN NAV (white strip with logo) ── */
+    .mainnav { background: var(--white); border-bottom: 1px solid var(--gray-200); }
+    .mainnav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; gap: 24px;
+    }
+    /* Logo */
+    .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .logo-icon { width: 54px; height: 54px; flex-shrink: 0; }
+    .logo-wordmark { line-height: 1.1; }
+    .logo-good { font-size: 1.45rem; font-weight: 800; color: var(--orange); }
+    .logo-life { font-size: 1.45rem; font-weight: 800; color: var(--navy); }
+    .logo-sub { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--navy); }
+    /* Main nav links */
+    .mainnav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .mainnav-links a {
+      font-size: 0.88rem; font-weight: 600; color: var(--gray-700);
+      padding: 7px 11px; border-radius: var(--radius); transition: color .2s, background .2s; white-space: nowrap;
+    }
+    .mainnav-links a:hover { color: var(--navy); background: var(--gray-100); }
+    .mainnav-links a.highlight { color: var(--navy); font-weight: 800; }
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--navy); border-radius: 2px; }
+    .mobile-menu {
+      display: none; flex-direction: column; padding: 12px 24px 16px;
+      border-top: 1px solid var(--gray-200); gap: 2px; background: var(--white);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-size: 0.95rem; font-weight: 600; color: var(--gray-700); padding: 9px 0; border-bottom: 1px solid var(--gray-100); }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: 580px; display: flex; align-items: center;
+      background: url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600&q=80') center/cover no-repeat;
+    }
+    .hero::before { content: ''; position: absolute; inset: 0; background: rgba(10,22,35,0.60); }
+    .hero-inner { position: relative; z-index: 2; text-align: center; padding: 72px 0; max-width: 740px; margin: 0 auto; }
+    .hero h1 { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; color: var(--white); line-height: 1.15; margin-bottom: 16px; }
+    .hero-sub  { font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+    .hero-sub2 { font-size: 1rem; color: rgba(255,255,255,0.9); margin-bottom: 28px; }
+    .hero-sub2 strong { font-weight: 800; }
+
+    /* Hero form */
+    .hero-form { max-width: 700px; margin: 0 auto; }
+    .field-label { display: block; color: var(--white); font-size: 0.8rem; font-weight: 700; text-align: left; margin-bottom: 5px; }
+    .field-label .req { color: #F87171; margin-left: 2px; }
+    .hero-form input {
+      width: 100%; padding: 14px 16px; border: none; border-radius: var(--radius);
+      font-family: var(--font); font-size: 0.95rem; outline: none; background: var(--white); color: var(--gray-900);
+    }
+    .hero-form input::placeholder { color: var(--gray-500); }
+    .hero-form .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 13px; }
+    .hero-form .field-wrap { display: flex; flex-direction: column; }
+    .hero-form .field-wrap .field-label { margin-top: 0; }
+    .hero-submit { width: 100%; margin-top: 14px; padding: 17px; font-size: 1rem; letter-spacing: 0.07em; border-radius: var(--radius); }
+    #hero-success { display: none; background: rgba(255,255,255,0.12); border: 2px solid var(--orange); border-radius: 8px; padding: 28px; text-align: center; color: var(--white); }
+    #hero-success h3 { font-size: 1.4rem; margin-bottom: 8px; }
+
+    /* ── SECTIONS ── */
+    section { padding: 68px 0; }
+    section.gray { background: var(--gray-100); }
+    section.navy { background: var(--navy); }
+    .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+    h2.st { font-size: clamp(1.55rem, 2.8vw, 2.1rem); font-weight: 800; color: var(--navy); line-height: 1.22; margin-bottom: 14px; }
+    h2.st.light { color: var(--white); }
+    p.sd { font-size: 0.97rem; color: var(--gray-500); max-width: 680px; line-height: 1.75; }
+    p.sd.light { color: rgba(255,255,255,0.75); }
+    .sh { margin-bottom: 44px; }
+    .sh.c { text-align: center; }
+    .sh.c p.sd { margin: 0 auto; }
+
+    /* ── INTRO TEXT ── */
+    .intro-text { max-width: 820px; margin: 0 auto; text-align: center; }
+    .intro-text h2 { font-size: clamp(1.4rem, 2.5vw, 1.9rem); font-weight: 800; color: var(--navy); margin-bottom: 16px; }
+    .intro-text p { font-size: 0.97rem; color: var(--gray-500); line-height: 1.75; margin-bottom: 12px; }
+    .intro-text p strong { color: var(--gray-900); }
+
+    /* ── HOW IT WORKS ── */
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 40px; }
+    .step { background: var(--white); border-radius: 8px; padding: 32px 22px; box-shadow: var(--shadow); text-align: center; }
+    .step-icon { width: 68px; height: 68px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+    .step-icon svg { width: 32px; height: 32px; }
+    .step h3 { font-size: 0.82rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+    .step p { font-size: 0.92rem; color: var(--gray-500); line-height: 1.65; }
+    .cta-center { text-align: center; margin-top: 36px; }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+    .about-img { border-radius: 8px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.13); }
+    .about-img img { width: 100%; height: 320px; object-fit: cover; }
+    .about-content h2 { margin-bottom: 16px; }
+    .about-content p { font-size: 0.97rem; color: var(--gray-500); line-height: 1.75; margin-bottom: 14px; }
+    .about-content p strong { color: var(--gray-900); }
+
+    /* Inline form */
+    .inline-form-wrap { max-width: 720px; margin: 36px auto 0; background: var(--white); border-radius: 8px; box-shadow: var(--shadow); padding: 32px 32px 24px; }
+    .inline-form-wrap h3 { font-size: 1.25rem; font-weight: 800; color: var(--navy); text-align: center; margin-bottom: 22px; }
+    .fg { margin-bottom: 13px; }
+    .fg label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--gray-700); margin-bottom: 5px; }
+    .fg label .req { color: var(--red); }
+    .fg input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius); font-family: var(--font); font-size: 0.93rem; outline: none; transition: border-color .2s;
+    }
+    .fg input:focus { border-color: var(--navy); }
+    .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-btn { width: 100%; padding: 15px; font-size: 0.95rem; margin-top: 6px; }
+    .form-note { text-align: center; font-size: 0.73rem; color: var(--gray-500); margin-top: 9px; }
+    .success-msg { display: none; text-align: center; padding: 20px 0; }
+    .success-msg h3 { color: var(--navy); font-size: 1.2rem; margin-bottom: 8px; }
+    .success-msg p { color: var(--gray-500); font-size: 0.93rem; }
+
+    /* ── SITUATIONS ── */
+    .sit-intro { font-size: 0.97rem; color: rgba(255,255,255,0.80); line-height: 1.75; margin-bottom: 32px; max-width: 860px; }
+    .sit-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .sit-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); border-radius: 6px; padding: 18px 16px; display: flex; gap: 12px; align-items: flex-start; }
+    .sit-check { width: 22px; height: 22px; background: var(--orange); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 0.7rem; font-weight: 800; margin-top: 1px; }
+    .sit-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--white); margin-bottom: 5px; }
+    .sit-card p { font-size: 0.83rem; color: rgba(255,255,255,0.65); line-height: 1.55; }
+
+    /* ── COMPARISON ── */
+    .comp-intro { font-size: 0.97rem; color: var(--gray-500); line-height: 1.75; margin-bottom: 36px; max-width: 860px; }
+    .comp-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .comp-col { border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
+    .comp-head { padding: 20px 24px; }
+    .comp-head.ours  { background: var(--navy); }
+    .comp-head.theirs { background: var(--gray-700); }
+    .comp-head h3 { font-size: 1rem; font-weight: 800; color: var(--white); margin-bottom: 3px; }
+    .comp-head .comp-tag { font-size: 0.78rem; color: rgba(255,255,255,0.65); font-style: italic; margin-bottom: 6px; }
+    .comp-head .comp-intro-text { font-size: 0.82rem; color: rgba(255,255,255,0.70); line-height: 1.5; }
+    .comp-body { background: var(--white); padding: 4px 24px 8px; }
+    .comp-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--gray-100); }
+    .comp-row:last-child { border-bottom: none; }
+    .ci { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; margin-top: 1px; }
+    .ci.yes { background: var(--green); color: var(--white); }
+    .ci.no  { background: var(--red); color: var(--white); }
+    .comp-row strong { display: block; font-size: 0.88rem; color: var(--gray-900); margin-bottom: 2px; }
+    .comp-row span   { font-size: 0.8rem; color: var(--gray-500); line-height: 1.5; }
+
+    /* ── BENEFITS ── */
+    .ben-intro { font-size: 0.97rem; color: var(--gray-500); line-height: 1.75; margin-bottom: 36px; max-width: 860px; }
+    .ben-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .ben { background: var(--white); border-radius: 8px; padding: 26px 20px; box-shadow: var(--shadow); text-align: center; }
+    .ben-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .ben-icon svg { width: 26px; height: 26px; }
+    .ben h3 { font-size: 0.93rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+    .ben p { font-size: 0.86rem; color: var(--gray-500); line-height: 1.6; }
+
+    /* ── OPTIONS ── */
+    .opt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 8px; }
+    .opt-card { background: var(--white); border-radius: 8px; padding: 26px 22px; box-shadow: var(--shadow); border-top: 4px solid var(--gray-300); }
+    .opt-card.best { border-top-color: var(--orange); }
+    .opt-n { font-size: 2.2rem; font-weight: 800; color: var(--gray-200); line-height: 1; margin-bottom: 12px; }
+    .opt-card.best .opt-n { color: var(--orange); }
+    .opt-card h3 { font-size: 0.92rem; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+    .opt-card p { font-size: 0.87rem; color: var(--gray-500); line-height: 1.65; }
+
+    /* ── CLOSING COPY ── */
+    .closing-copy { max-width: 820px; margin: 0 auto; }
+    .closing-copy h2 { font-size: clamp(1.4rem,2.5vw,1.9rem); font-weight: 800; color: var(--navy); margin-bottom: 16px; }
+    .closing-copy p { font-size: 0.97rem; color: var(--gray-500); line-height: 1.75; margin-bottom: 14px; }
+    .closing-copy p strong { color: var(--gray-900); }
+    .or-call { text-align: center; margin-top: 20px; font-size: 1rem; font-weight: 700; color: var(--navy); }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 760px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--gray-300); }
+    .faq-q {
+      width: 100%; background: none; border: none; text-align: left;
+      padding: 18px 0; display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; font-family: var(--font); font-size: 0.97rem; font-weight: 700;
+      color: var(--navy); gap: 16px;
+    }
+    .faq-q:focus { outline: 2px solid var(--orange); outline-offset: 2px; }
+    .faq-toggle { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; transition: transform .25s; }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); background: var(--orange); }
+    .faq-a { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+    .faq-a p { padding: 0 0 18px; font-size: 0.93rem; color: var(--gray-500); line-height: 1.7; }
+
+    /* ── FINAL CTA ── */
+    .final-cta { background: var(--navy); text-align: center; padding: 72px 0; }
+    .final-cta h2 { font-size: clamp(1.7rem,3.5vw,2.5rem); font-weight: 800; color: var(--white); margin-bottom: 14px; }
+    .final-cta p { color: rgba(255,255,255,0.78); margin-bottom: 30px; font-size: 0.97rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .final-actions { display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap; }
+    .final-phone { font-size: 1.4rem; font-weight: 800; color: var(--white); }
+
+    /* ── FOOTER ── */
+    footer { background: #0D1B27; color: rgba(255,255,255,0.58); padding: 48px 0 22px; }
+    .ft-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 36px; }
+    .ft-brand p { font-size: 0.87rem; margin-top: 14px; line-height: 1.65; }
+    .ft-social { display: flex; gap: 10px; margin-top: 14px; }
+    .ft-social a { width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.74rem; font-weight: 700; color: var(--white); transition: background .2s, border-color .2s; }
+    .ft-social a:hover { background: var(--orange); border-color: var(--orange); }
+    .ft-col h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--white); margin-bottom: 14px; }
+    .ft-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .ft-col ul a { font-size: 0.87rem; transition: color .2s; }
+    .ft-col ul a:hover { color: var(--white); }
+    .ft-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 0.8rem; }
+    .ft-bottom a { color: rgba(255,255,255,0.4); }
+    .ft-bottom a:hover { color: var(--white); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .mainnav-links, .hamburger { }
+      .mainnav-links { display: none; }
+      .hamburger { display: flex; }
+      .steps { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+      .about-grid { grid-template-columns: 1fr; }
+      .sit-grid { grid-template-columns: 1fr 1fr; }
+      .comp-wrap { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .ben-grid { grid-template-columns: 1fr 1fr; }
+      .opt-grid { grid-template-columns: 1fr; max-width: 420px; margin: 8px auto 0; }
+      .ft-grid { grid-template-columns: 1fr 1fr; }
+      .ft-brand { grid-column: 1 / -1; }
+      .topnav-links, .topnav-phone, .topnav-social { display: none; }
+    }
+    @media (max-width: 560px) {
+      .topbar input { width: 140px; }
+      .hero-form .two-col { grid-template-columns: 1fr; }
+      .sit-grid { grid-template-columns: 1fr; }
+      .ben-grid { grid-template-columns: 1fr; }
+      .fg-row { grid-template-columns: 1fr; }
+      .ft-grid { grid-template-columns: 1fr; }
+      .inline-form-wrap { padding: 22px 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR: quick offer bar -->
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-inner">
+      <span class="topbar-text">GET STARTED | Get Your Fair Cash Offer Today</span>
+      <input type="tel" placeholder="Phone" aria-label="Phone" id="topbarPhone" />
+      <button class="btn-orange" onclick="document.getElementById('hero-section').scrollIntoView({behavior:'smooth'})">Get Your Offer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOP NAV: links, phone, social -->
+<div class="topnav">
+  <div class="container">
+    <div class="topnav-inner">
+      <ul class="topnav-links">
+        <li><a href="#cash-offer">Get Your Cash Offer</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+      <a href="tel:+18045895300" class="topnav-phone">(804) 589-5300</a>
+      <div class="topnav-social">
+        <a href="https://www.facebook.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+        <a href="https://www.instagram.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Instagram">📷</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN NAV: logo + page links -->
+<nav class="mainnav" id="mainNav">
+  <div class="container">
+    <div class="mainnav-inner">
+      <a href="/" class="logo">
+        <svg class="logo-icon" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+          <!-- House body -->
+          <polygon points="45,10 8,40 16,40 16,78 74,78 74,40 82,40" fill="#1D3557"/>
+          <!-- Door -->
+          <rect x="34" y="54" width="22" height="24" rx="1" fill="#E8A020"/>
+          <!-- Windows -->
+          <rect x="18" y="44" width="14" height="12" rx="1" fill="#E8A020"/>
+          <rect x="58" y="44" width="14" height="12" rx="1" fill="#E8A020"/>
+          <!-- Waves -->
+          <path d="M2 83 Q22 77 45 83 Q68 89 88 83" stroke="#E8A020" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M2 88 Q22 82 45 88 Q68 94 88 88" stroke="#E8A020" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+        <div class="logo-wordmark">
+          <div><span class="logo-good">Good</span><span class="logo-life">Life</span></div>
+          <div class="logo-sub">Property Group</div>
+        </div>
+      </a>
+      <ul class="mainnav-links">
+        <li><a href="#cash-offer" class="highlight">Sell Your House The Easy Way</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#about">Our Company</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#cash-offer">Sell Your House The Easy Way</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#about">Our Company</a>
+      <a href="#contact">Contact Us</a>
+      <a href="tel:+18045895300" style="color:var(--navy);font-weight:800;">📞 (804) 589-5300</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero-section">
+  <div class="container">
+    <div class="hero-inner" id="cash-offer">
+      <h1>We Buy Houses In<br>Richmond, VA For Cash</h1>
+      <p class="hero-sub">Get A Fair Cash Offer From A Trusted Cash Home Buyer.</p>
+      <p class="hero-sub2"><strong>No</strong> Realtors, <strong>No</strong> Fees, <strong>No</strong> Repairs.</p>
+      <div class="hero-form">
+        <div id="hero-success">
+          <h3>🎉 We Got Your Request!</h3>
+          <p>We'll reach out within 24 hours with your cash offer. Call us anytime: <strong>(804) 589-5300</strong>.</p>
+        </div>
+        <form id="heroForm">
+          <label class="field-label" for="h-address">Property Address <span class="req">*</span></label>
+          <input type="text" id="h-address" name="address" placeholder="Enter Your Address" required />
+          <div class="two-col">
+            <div class="field-wrap">
+              <label class="field-label" for="h-phone">Phone</label>
+              <input type="tel" id="h-phone" name="phone" />
+            </div>
+            <div class="field-wrap">
+              <label class="field-label" for="h-email">Email <span class="req">*</span></label>
+              <input type="email" id="h-email" name="email" required />
+            </div>
+          </div>
+          <button type="submit" class="btn-orange hero-submit">GET MY FAIR CASH OFFER &raquo;</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO / EASIEST WAY -->
+<section>
+  <div class="container">
+    <div class="intro-text">
+      <h2>The Easiest Way To Sell Your House Fast In Richmond</h2>
+      <p>Want to sell your house fast in Richmond, VA? We buy houses as-is! No agents, no fees, no repairs, and it's completely FREE! <a href="#how-it-works" style="color:var(--navy);font-weight:700;text-decoration:underline;">Learn how our home buying process works!</a></p>
+      <p>We believe selling a house in Richmond should be fast, and hassle-free. If you're interested in selling your house in Richmond, VA, <strong>we can buy your house with a fair all-cash offer.</strong> We work on your schedule, and best of all, when you sell to us, you sell it <em>as-is</em>. Walk away without doing any repairs. We'll even clean out the property for you. It's that easy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="gray" id="how-it-works">
+  <div class="container">
+    <div class="sh c">
+      <h2 class="st">How To Sell Your House For Cash In Richmond, VA</h2>
+      <p class="sd">To start, simply fill out our short information form on this site or give us a call at (804) 589-5300. <strong>We will present you with the highest cash offer possible within 24 hours.</strong></p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke="#E8A020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Step 1</h3>
+        <p>Tell us about your house. We'll get started today analyzing your property.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" stroke="#E8A020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Step 2</h3>
+        <p>We'll make you a fair offer based on the market value and condition with no obligation.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke="#E8A020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Step 3</h3>
+        <p>Choose the day you'd like to close and pick up your check. It's that easy!</p>
+      </div>
+    </div>
+    <div class="cta-center">
+      <a href="#cash-offer" class="btn-orange"><strong>Get My Fair Offer Today!</strong></a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / LOCAL BUYERS -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80" alt="Richmond Virginia neighborhood" loading="lazy" />
+      </div>
+      <div class="about-content">
+        <h2 class="st">Local Cash Homebuyers In Richmond You Can Trust</h2>
+        <p>We're Good Life Property Group! As cash home buyers, we buy houses anywhere in Richmond and other parts of VA. Our <a href="#how-it-works" style="color:var(--navy);font-weight:700;">house buying process</a> is simple and, as a bonus, we can pay closing costs, too.</p>
+        <p>Our goal is to help sellers ease the stress and hassle of selling a house. <strong>Save time and money by selling to a professional cash homebuyer.</strong></p>
+        <p>Start the process today if you are serious about <strong>selling your Richmond property!</strong> Fill out the form below for a fast online quote, or call us at (804) 589-5300.</p>
+      </div>
+    </div>
+    <!-- Second inline form -->
+    <div class="inline-form-wrap">
+      <h3>Get An Offer Today, Sell In A Matter Of Days</h3>
+      <div class="success-msg" id="form2-success">
+        <h3>✅ Got It — We'll Be In Touch!</h3>
+        <p>Expect a call within 24 hours. Questions? <a href="tel:+18045895300" style="color:var(--navy);font-weight:700;">(804) 589-5300</a></p>
+      </div>
+      <form id="form2">
+        <div class="fg">
+          <label for="f2-address">Property Address <span class="req">*</span></label>
+          <input type="text" id="f2-address" name="address" placeholder="Enter Your Address" required />
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label for="f2-phone">Phone</label>
+            <input type="tel" id="f2-phone" name="phone" />
+          </div>
+          <div class="fg">
+            <label for="f2-email">Email <span class="req">*</span></label>
+            <input type="email" id="f2-email" name="email" required />
+          </div>
+        </div>
+        <button type="submit" class="btn-orange form-btn">GET MY FAIR CASH OFFER &raquo;</button>
+        <p class="form-note">🔒 Your info is 100% private. No spam. No obligation.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- SITUATIONS -->
+<section class="navy">
+  <div class="container">
+    <h2 class="st light" style="margin-bottom:14px;">We Buy Houses In Richmond In ANY Situation</h2>
+    <p class="sit-intro">There's no issue we haven't seen during our years in business. Stopping foreclosure? Facing divorce? <strong style="color:var(--white);">Moving?</strong> <strong style="color:var(--white);">Upside down</strong> in your mortgage? <strong style="color:var(--white);">Liens?</strong> It doesn't matter whether you live in it, you're renting it out, it's vacant, or not even habitable. We've helped owners who have received unwanted property through inheritance, own vacant houses, are behind on payments, owe tax liens, downsized and can't sell, and more. Even if you've previously listed the property, the house needs repairs you can't afford, is fire damaged, or has bad rental tenants, Good Life Property Group can still buy it and will work through your unique situation.</p>
+    <div class="sit-grid">
+      <div class="sit-card"><div class="sit-check">✓</div><div><h4>Too many repairs to deal with</h4><p>Received a renovation quote to get your house fixed and can't afford the costs?</p></div></div>
+      <div class="sit-card"><div class="sit-check">✓</div><div><h4>Inherited a property</h4><p>Inherited property and need to sell it before probate is complete?</p></div></div>
+      <div class="sit-card"><div class="sit-check">✓</div><div><h4>Going through divorce</h4><p>Going through a divorce and want to sell a house within your timeframe and just be done?</p></div></div>
+      <div class="sit-card"><div class="sit-check">✓</div><div><h4>Stop foreclosure</h4><p>In default on your mortgage or taxes, and the house is scheduled for auction?</p></div></div>
+      <div class="sit-card"><div class="sit-check">✓</div><div><h4>Moving out of state</h4><p>Need to relocate for work or retirement and need a quick seamless sale?</p></div></div>
+      <div class="sit-card"><div class="sit-check">✓</div><div><h4>Tired of dealing with tenants</h4><p>Sick of being a landlord and renting to tenants who trash your home and don't pay rent when it's due?</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+  <div class="container">
+    <h2 class="st" style="margin-bottom:14px;">What Are The Benefits Of Selling My House For Cash In Richmond?</h2>
+    <p class="comp-intro">Good Life Property Group provides the fastest option for selling your Richmond home. <strong>No</strong> <strong>listing fees</strong>, agent commissions, and a <strong>quick and hassle-free</strong> closing process. When you sell to companies that buy houses, you skip the hassle of repairs and agents. Getting rid of the headache and hassle of dealing with an unwanted property is our service to you. <em>See the side-by-side comparison below:</em></p>
+    <div class="comp-wrap">
+      <div class="comp-col">
+        <div class="comp-head ours">
+          <h3>Sell With Our Cash Offer Program</h3>
+          <p class="comp-tag"><em>Sell your house to Good Life Property Group</em></p>
+          <p class="comp-intro-text">Get a <strong>fair cash offer</strong> so you can sell without the hassles and stress of listing.</p>
+        </div>
+        <div class="comp-body">
+          <div class="comp-row"><div class="ci yes">✓</div><div><strong>Competitive cash offer within 24 hours – You choose your closing day.</strong><span>We'll carefully evaluate your house with our local market expertise to provide a fair, no-obligation cash offer.</span></div></div>
+          <div class="comp-row"><div class="ci yes">✓</div><div><strong>Zero fees. Zero commissions. No closing costs.</strong><span>We charge no fees or commissions when we buy your house. The sales price is the amount that goes into your pocket.</span></div></div>
+          <div class="comp-row"><div class="ci yes">✓</div><div><strong>No Showings – No Hassles</strong><span>We buy your house "as-is," meaning no open houses, no weekend showings, and no need to fix the house up.</span></div></div>
+          <div class="comp-row"><div class="ci yes">✓</div><div><strong>We cover repairs.</strong><span>If your house needs repairs, we'll handle them for you! You can even leave behind unwanted items, and we'll haul them off at no extra charge.</span></div></div>
+        </div>
+      </div>
+      <div class="comp-col">
+        <div class="comp-head theirs">
+          <h3>Sell The Traditional Way</h3>
+          <p class="comp-tag"><em>Listing your house with an agent</em></p>
+          <p class="comp-intro-text">The time, money, and stress of listing your house on the market really add up.</p>
+        </div>
+        <div class="comp-body">
+          <div class="comp-row"><div class="ci no">✗</div><div><strong>It could take months to sell your house</strong><span>Your home costs you money the entire time it sits on the market. Some people just can't wait 90 days to sell their house.</span></div></div>
+          <div class="comp-row"><div class="ci no">✗</div><div><strong>Fees and commissions add up</strong><span>In addition to closing costs, commissions and fees stack up and reduce the cash that goes into your pocket. On average, 6% in commissions/fees are paid by a seller.</span></div></div>
+          <div class="comp-row"><div class="ci no">✗</div><div><strong>Open Houses and disruptions to your life</strong><span>Not only do you have to get your house ready to show, but the number of showings can seriously disrupt your life.</span></div></div>
+          <div class="comp-row"><div class="ci no">✗</div><div><strong>You may be asked to make repairs</strong><span>Depending on what happens during the inspection period, you could be on the hook for repairs you didn't know you needed.</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-center" style="margin-top:32px;">
+      <a href="#cash-offer" class="btn-orange">Yes! I want to get my fair cash offer!</a>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS / NO COMMISSIONS ETC -->
+<section class="gray">
+  <div class="container">
+    <h2 class="st" style="margin-bottom:14px;">A Quicker Way To Sell Your House In Richmond VA</h2>
+    <p class="ben-intro">Is there a solution to skip the uncertainty and lengthy process of a traditional home sale? Yes, there is! Sell directly to Good Life Property Group. We buy houses directly from Richmond homeowners for cash. Sell your house fast and without having to pay an agent's commission.<br><br>When we buy your house with our local Cash Home Buyer program…</p>
+    <div class="ben-grid">
+      <div class="ben">
+        <div class="ben-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="white" stroke-width="2"/></svg></div>
+        <h3>No Commissions</h3>
+        <p>No commissions (and we'll pay closing costs!) – We don't charge commissions. Our profit comes from fixing up your house and going through the hassle of selling it ourselves.</p>
+      </div>
+      <div class="ben">
+        <div class="ben-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Sell In as-is Condition</h3>
+        <p>When we say "we buy houses as-is," we mean it. Does your house need repairs you don't want to make? Great! We'll do the repairs for you.</p>
+      </div>
+      <div class="ben">
+        <div class="ben-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Fast Cash Sale</h3>
+        <p>We'll know very quickly if we can help and, unlike selling through an agent, you don't have to wait to see if the buyer can get financing – we're ready to buy right now!</p>
+      </div>
+      <div class="ben">
+        <div class="ben-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Private Home Sale</h3>
+        <p>Fully confidential – Avoid having to share your information with agents, dozens of buyers, and the world on the MLS. Our process is entirely private and discreet.</p>
+      </div>
+      <div class="ben">
+        <div class="ben-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>No Repairs Needed</h3>
+        <p>We deal with repairs ourselves when we buy your house. We'll make it our responsibility to fix everything from leaking roofs to complete remodels.</p>
+      </div>
+      <div class="ben">
+        <div class="ben-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>No Cleaning Needed</h3>
+        <p>We'll clean the house – You never have to worry about cleaning it up for daily showings and open houses.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE OPTIONS + THIRD FORM -->
+<section id="contact">
+  <div class="container">
+    <h2 class="st" style="margin-bottom:8px;">Options For Selling Your House Fast In Richmond, VA</h2>
+    <p style="color:var(--gray-500);margin-bottom:28px;font-size:0.97rem;">There are three options when selling a house or property in Richmond, VA:</p>
+    <div class="opt-grid">
+      <div class="opt-card">
+        <div class="opt-n">01</div>
+        <h3>List your house on the market with a real estate agent</h3>
+        <p>From listing to cash in hand is usually 45 to 90+ days, plus you must deal with the hassles of open houses, commissions, appraisals, and financing falling through at the last minute.</p>
+      </div>
+      <div class="opt-card">
+        <div class="opt-n">02</div>
+        <h3>Sell the house yourself (FSBO)</h3>
+        <p>You're doing all the work an agent would do to save money on selling expenses, but it costs you a lot of time and stress.</p>
+      </div>
+      <div class="opt-card best">
+        <div class="opt-n">03</div>
+        <h3>Sell for cash to Good Life Property Group</h3>
+        <p>Avoid the hassles of listing on the market, pick your closing date, and don't bother with cleaning up or repairs. There is no obligation to see how much we can pay, and we LOVE the most difficult situations agents or other real estate investors won't touch.</p>
+      </div>
+    </div>
+    <p style="color:var(--gray-500);font-size:0.93rem;margin-top:24px;line-height:1.75;">Get started by submitting your property information below; you'll receive a cash offer on your house within 24 hours. We can close whenever YOU choose to close – it's entirely up to you! It doesn't matter the condition, if you have owned the house long, or if there are tenants you can't get rid of. We'll take care of it all. And, because we buy houses for cash, you don't have to worry about your buyer getting financing; we can close in as little as seven days. <a href="#how-it-works" style="color:var(--navy);font-weight:700;">Go here to learn about our process →</a></p>
+    <!-- Third form -->
+    <div class="inline-form-wrap">
+      <h3>Get An Offer Today, Sell In A Matter Of Days</h3>
+      <div class="success-msg" id="form3-success">
+        <h3>✅ Got It — We'll Be In Touch!</h3>
+        <p>Expect a call within 24 hours. Questions? <a href="tel:+18045895300" style="color:var(--navy);font-weight:700;">(804) 589-5300</a></p>
+      </div>
+      <form id="form3">
+        <div class="fg">
+          <label for="f3-address">Property Address <span class="req">*</span></label>
+          <input type="text" id="f3-address" name="address" placeholder="Enter Your Address" required />
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label for="f3-phone">Phone</label>
+            <input type="tel" id="f3-phone" name="phone" />
+          </div>
+          <div class="fg">
+            <label for="f3-email">Email <span class="req">*</span></label>
+            <input type="email" id="f3-email" name="email" required />
+          </div>
+        </div>
+        <button type="submit" class="btn-orange form-btn">GET MY FAIR CASH OFFER &raquo;</button>
+        <p class="form-note">🔒 Your info is 100% private. No spam. No obligation.</p>
+      </form>
+      <p class="or-call">Or Give Us A Call Now At <a href="tel:+18045895300" style="color:var(--navy);">(804) 589-5300</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING COPY -->
+<section class="gray">
+  <div class="container">
+    <div class="closing-copy">
+      <h2>Sell Your House For Cash In Richmond And Walk Away</h2>
+      <p>We buy properties from owners like you, in all situations. From divorce, foreclosure, death of a family member, burdensome rental property, and other situations. We buy houses for cash in Richmond. Sometimes, homeowners have lives too busy to take the time to do all the things typically needed to prepare a house to sell on the market. If that describes you, tell us about the property you'd like to sell. <strong>We can help you sell your home quickly and for cash.</strong></p>
+      <p>If you don't want to put up with the hassle of owning that house any longer but the hassle and time-consuming expense of selling your property the traditional way is just too much, contact us today. Once you let us know about the property you'd like to be rid of, you could have a fair, no-obligation, all-cash offer in 24 hours and close in 7 days!</p>
+      <p><em>We buy houses in Richmond</em> and all surrounding areas in VA. If you need to sell your house fast, we promise to make you a fair, no-obligation, no-hassle offer. Take it or leave it. You've got nothing to lose. <a href="#faq" style="color:var(--navy);font-weight:700;">Still have questions?</a> Calling us could be the best decision you make all week! 🙂 <strong>(804) 589-5300</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="sh c">
+      <h2 class="st">Frequently Asked Questions</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Are there any fees or commissions when selling to you? <span class="faq-toggle">+</span></button>
+        <div class="faq-a"><p>None at all. We don't charge commissions or fees of any kind. We also cover your closing costs. The offer we present is exactly what you walk away with — no deductions.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">How quickly can you close? <span class="faq-toggle">+</span></button>
+        <div class="faq-a"><p>As fast as 7 days once you accept our offer. Because we buy with cash, there's no bank financing or mortgage underwriting to wait on. If you need more time, we can work around your schedule — you choose the closing date.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Do I need to make repairs before selling? <span class="faq-toggle">+</span></button>
+        <div class="faq-a"><p>Never. We buy homes in any condition — from minor cosmetic issues all the way to major structural problems. We factor the repair costs into our offer so you don't spend a dollar before closing.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">How do you determine what to offer? <span class="faq-toggle">+</span></button>
+        <div class="faq-a"><p>We look at your property's current condition, comparable recent sales in the area, and estimated repair costs. Our goal is to make the highest fair offer we can while accounting for the work we take on after closing.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What if my house has tenants in it? <span class="faq-toggle">+</span></button>
+        <div class="faq-a"><p>Not a problem at all. We have extensive experience buying tenant-occupied properties and will manage the transition after closing. That's entirely our responsibility — not yours.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Is there any obligation when I submit my info? <span class="faq-toggle">+</span></button>
+        <div class="faq-a"><p>Zero obligation. Submitting your information and getting a cash offer is completely free and commits you to nothing. You can accept, counter, or walk away — entirely your call. No pressure, ever.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="final-cta">
+  <div class="container">
+    <h2>Ready To Sell Your House Fast In Richmond?</h2>
+    <p>We buy houses in Richmond and all surrounding areas in VA. Fair, no-obligation cash offer within 24 hours. Close whenever you're ready.</p>
+    <div class="final-actions">
+      <a href="#cash-offer" class="btn-orange" style="font-size:1rem;padding:16px 36px;">Get A Cash Offer Today</a>
+      <a href="tel:+18045895300" class="final-phone">📞 (804) 589-5300</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <div class="logo" style="margin-bottom:4px;">
+          <svg class="logo-icon" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="45,10 8,40 16,40 16,78 74,78 74,40 82,40" fill="white"/>
+            <rect x="34" y="54" width="22" height="24" rx="1" fill="#E8A020"/>
+            <rect x="18" y="44" width="14" height="12" rx="1" fill="#E8A020"/>
+            <rect x="58" y="44" width="14" height="12" rx="1" fill="#E8A020"/>
+            <path d="M2 83 Q22 77 45 83 Q68 89 88 83" stroke="#E8A020" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="logo-wordmark">
+            <div><span class="logo-good">Good</span><span style="font-size:1.45rem;font-weight:800;color:white;">Life</span></div>
+            <div class="logo-sub" style="color:rgba(255,255,255,0.5);">Property Group</div>
+          </div>
+        </div>
+        <p>We are a real estate solutions and investment firm that specializes in helping homeowners get rid of burdensome houses fast. We are investors and problem solvers who can buy your house fast with a fair all cash offer.</p>
+        <div class="ft-social">
+          <a href="https://www.facebook.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+          <a href="https://www.instagram.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Instagram">📷</a>
+        </div>
+      </div>
+      <div class="ft-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#cash-offer">Get A Cash Offer Today</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#about">Our Company</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:+18045895300">(804) 589-5300</a></li>
+          <li><span>Richmond, VA</span></li>
+          <li><span>& Surrounding Areas</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <span>© 2026 Good Life Property Group. All rights reserved.</span>
+      <div style="display:flex;gap:16px;">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-a');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-a').style.maxHeight = '0';
+        i.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // Forms — replace with your Google Apps Script endpoint
+  const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+  async function submitForm(formEl, successEl) {
+    const data = { source: 'Good Life Property Group', timestamp: new Date().toISOString() };
+    new FormData(formEl).forEach((v, k) => data[k] = v);
+    const btn = formEl.querySelector('button[type="submit"]');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    try {
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+      formEl.style.display = 'none';
+      successEl.style.display = 'block';
+    } catch(e) {
+      btn.textContent = 'Error — please call (804) 589-5300';
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById('heroForm').addEventListener('submit', e => { e.preventDefault(); submitForm(e.target, document.getElementById('hero-success')); });
+  document.getElementById('form2').addEventListener('submit',   e => { e.preventDefault(); submitForm(e.target, document.getElementById('form2-success')); });
+  document.getElementById('form3').addEventListener('submit',   e => { e.preventDefault(); submitForm(e.target, document.getElementById('form3-success')); });
+</script>
+</body>
+</html>
