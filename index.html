@@ -50,13 +50,19 @@
     .btn-orange:hover { background: var(--orange-dk); }
 
     /* ── TOP BAR ── */
-    .topbar { background: var(--navy); padding: 9px 0; }
+    .topbar { background: var(--navy); padding: 9px 0; position: relative; }
     .topbar-inner { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
     .topbar-text { color: var(--white); font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
     .topbar input {
       padding: 8px 13px; border: none; border-radius: var(--radius);
       font-family: var(--font); font-size: 0.88rem; width: 190px; outline: none;
     }
+    .topbar-close {
+      position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.4rem;
+      line-height: 1; cursor: pointer; padding: 2px 6px; transition: color .2s;
+    }
+    .topbar-close:hover { color: var(--white); }
 
     /* ── TOP NAV (navy strip) ── */
     .topnav { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.12); }
@@ -99,8 +105,18 @@
     .mainnav-links a:hover { color: var(--navy); background: var(--gray-100); }
     .mainnav-links a.highlight { color: var(--navy); font-weight: 800; }
     /* Hamburger */
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-    .hamburger span { display: block; width: 24px; height: 2px; background: var(--navy); border-radius: 2px; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 4px; cursor: pointer;
+      width: 42px; height: 42px; align-items: center; justify-content: center;
+      background: var(--navy); border-radius: var(--radius); border: none; flex-shrink: 0;
+    }
+    .hamburger span { display: block; width: 18px; height: 2px; background: var(--white); border-radius: 2px; }
+    .mainnav-phone {
+      display: none; align-items: center; justify-content: center; flex-shrink: 0;
+      background: var(--orange); color: var(--white); font-weight: 800; font-size: 0.92rem;
+      padding: 11px 18px; border-radius: var(--radius); white-space: nowrap;
+    }
+    .mainnav-phone:hover { background: var(--orange-dk); }
     .mobile-menu {
       display: none; flex-direction: column; padding: 12px 24px 16px;
       border-top: 1px solid var(--gray-200); gap: 2px; background: var(--white);
@@ -114,15 +130,15 @@
       position: relative; min-height: 580px; display: flex; align-items: center;
       background: url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600&q=80') center/cover no-repeat;
     }
-    .hero::before { content: ''; position: absolute; inset: 0; background: rgba(10,22,35,0.60); }
-    .hero-inner { position: relative; z-index: 2; text-align: center; padding: 72px 0; max-width: 740px; margin: 0 auto; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(8,20,33,0.78) 0%, rgba(8,20,33,0.55) 45%, rgba(8,20,33,0.25) 100%); }
+    .hero-inner { position: relative; z-index: 2; text-align: left; padding: 72px 0; max-width: 620px; margin: 0; }
     .hero h1 { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; color: var(--white); line-height: 1.15; margin-bottom: 16px; }
     .hero-sub  { font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
     .hero-sub2 { font-size: 1rem; color: rgba(255,255,255,0.9); margin-bottom: 28px; }
     .hero-sub2 strong { font-weight: 800; }
 
     /* Hero form */
-    .hero-form { max-width: 700px; margin: 0 auto; }
+    .hero-form { max-width: 620px; margin: 0; }
     .field-label { display: block; color: var(--white); font-size: 0.8rem; font-weight: 700; text-align: left; margin-bottom: 5px; }
     .field-label .req { color: #F87171; margin-left: 2px; }
     .hero-form input {
@@ -282,9 +298,9 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
-      .mainnav-links, .hamburger { }
       .mainnav-links { display: none; }
-      .hamburger { display: flex; }
+      .hamburger { display: flex; order: -1; }
+      .mainnav-phone { display: flex; }
       .steps { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
       .about-grid { grid-template-columns: 1fr; }
       .sit-grid { grid-template-columns: 1fr 1fr; }
@@ -310,12 +326,13 @@
 <body>
 
 <!-- TOP BAR: quick offer bar -->
-<div class="topbar">
+<div class="topbar" id="topbar">
   <div class="container">
     <div class="topbar-inner">
       <span class="topbar-text">GET STARTED | Get Your Fair Cash Offer Today</span>
       <input type="tel" placeholder="Phone" aria-label="Phone" id="topbarPhone" />
       <button class="btn-orange" onclick="document.getElementById('hero-section').scrollIntoView({behavior:'smooth'})">Get Your Offer</button>
+      <button class="topbar-close" id="topbarClose" aria-label="Close">&times;</button>
     </div>
   </div>
 </div>
@@ -353,6 +370,7 @@
       <button class="hamburger" id="hamburger" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
+      <a href="tel:+18045895300" class="mainnav-phone">(804) 589-5300</a>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="#cash-offer">Sell Your House The Easy Way</a>
@@ -750,6 +768,11 @@
   const mobileMenu = document.getElementById('mobileMenu');
   hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
   mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+  // Top bar close
+  document.getElementById('topbarClose').addEventListener('click', () => {
+    document.getElementById('topbar').style.display = 'none';
+  });
 
   // FAQ accordion
   document.querySelectorAll('.faq-q').forEach(btn => {
