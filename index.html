@@ -50,7 +50,7 @@
     .btn-orange:hover { background: var(--orange-dk); }
 
     /* ── TOP BAR ── */
-    .topbar { background: var(--navy); padding: 9px 0; position: sticky; top: 0; z-index: 1000; }
+    .topbar { background: var(--navy); padding: 9px 0; position: sticky; top: 0; z-index: 1000; display: none; }
     .topbar-inner { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
     .topbar-text { color: var(--white); font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
     .topbar input {
@@ -65,7 +65,7 @@
     .topbar-close:hover { color: var(--white); }
 
     /* ── TOP NAV (navy strip) ── */
-    .topnav { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.12); }
+    .topnav { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 1000; }
     .topnav-inner {
       display: flex; align-items: center; justify-content: flex-end;
       padding: 10px 0; gap: 20px;
@@ -80,21 +80,22 @@
     .topnav-phone { font-weight: 700; font-size: 1rem; color: var(--white); }
     .topnav-social { display: flex; gap: 8px; }
     .topnav-social a {
-      width: 28px; height: 28px; border: 1.5px solid rgba(255,255,255,0.5);
+      width: 30px; height: 30px; background: var(--white);
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      color: var(--white); font-size: 0.72rem; font-weight: 700; transition: border-color .2s, background .2s;
+      color: var(--navy); transition: background .2s, opacity .2s;
     }
-    .topnav-social a:hover { border-color: var(--white); background: rgba(255,255,255,0.1); }
+    .topnav-social a svg { width: 15px; height: 15px; }
+    .topnav-social a:hover { opacity: 0.85; }
 
     /* ── MAIN NAV (white strip with logo) ── */
     .mainnav { background: var(--white); border-bottom: 1px solid var(--gray-200); }
     .mainnav-inner {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 0; gap: 24px;
+      padding: 26px 0; gap: 24px;
     }
     /* Logo */
     .logo { display: flex; align-items: center; flex-shrink: 0; }
-    .logo-img { height: 52px; width: auto; display: block; }
+    .logo-img { height: 82px; width: auto; display: block; }
     .ft-brand .logo-img { height: 56px; }
     /* Main nav links */
     .mainnav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
@@ -301,6 +302,10 @@
       .mainnav-links { display: none; }
       .hamburger { display: flex; order: -1; }
       .mainnav-phone { display: flex; }
+      .mainnav-inner { padding: 14px 0; }
+      .logo-img { height: 52px; }
+      .topnav { display: none; }
+      .topbar { display: block; }
       .steps { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
       .about-grid { grid-template-columns: 1fr; }
       .sit-grid { grid-template-columns: 1fr 1fr; }
@@ -309,7 +314,6 @@
       .opt-grid { grid-template-columns: 1fr; max-width: 420px; margin: 8px auto 0; }
       .ft-grid { grid-template-columns: 1fr 1fr; }
       .ft-brand { grid-column: 1 / -1; }
-      .topnav-links, .topnav-phone, .topnav-social { display: none; }
     }
     @media (max-width: 560px) {
       .topbar input { width: 140px; }
@@ -347,8 +351,8 @@
       </ul>
       <a href="tel:+18045895300" class="topnav-phone">(804) 589-5300</a>
       <div class="topnav-social">
-        <a href="https://www.facebook.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Facebook">f</a>
-        <a href="https://www.instagram.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Instagram">📷</a>
+        <a href="https://www.facebook.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg></a>
+        <a href="https://www.instagram.com/goodlifepropertygroupllc/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
       </div>
     </div>
   </div>
