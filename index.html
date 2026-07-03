@@ -129,7 +129,7 @@
     /* ── HERO ── */
     .hero {
       position: relative; min-height: 580px; display: flex; align-items: center;
-      background: url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600&q=80') center/cover no-repeat;
+      background: url('https://image-cdn.carrot.com/uploads/sites/79342/2024/06/AdobeStock_339543847_0-1920x800.jpg') center/cover no-repeat;
     }
     .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(8,20,33,0.78) 0%, rgba(8,20,33,0.55) 45%, rgba(8,20,33,0.25) 100%); }
     .hero-inner { position: relative; z-index: 2; text-align: left; padding: 72px 0; max-width: 620px; margin: 0; }
@@ -182,13 +182,18 @@
     .step p { font-size: 0.92rem; color: var(--gray-500); line-height: 1.65; }
     .cta-center { text-align: center; margin-top: 36px; }
 
-    /* ── ABOUT ── */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
-    .about-img { border-radius: 8px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.13); }
-    .about-img img { width: 100%; height: 320px; object-fit: cover; }
-    .about-content h2 { margin-bottom: 16px; }
-    .about-content p { font-size: 0.97rem; color: var(--gray-500); line-height: 1.75; margin-bottom: 14px; }
-    .about-content p strong { color: var(--gray-900); }
+    /* ── TRUST (full-bleed photo section) ── */
+    .trust-section { position: relative; padding: 90px 0; background: url('https://image-cdn.carrot.com/uploads/sites/79342/2024/06/AdobeStock_445962232_0.jpg') center/cover no-repeat; }
+    .trust-section::before { content: ''; position: absolute; inset: 0; background: rgba(8,20,33,0.72); }
+    .trust-inner { position: relative; z-index: 2; text-align: center; max-width: 760px; margin: 0 auto; }
+    .trust-logo { max-width: 380px; width: 80%; margin: 0 auto 28px; opacity: 0.92; }
+    .trust-section h2 { color: var(--white); margin-bottom: 16px; }
+    .trust-section p { font-size: 0.97rem; color: rgba(255,255,255,0.82); line-height: 1.75; margin-bottom: 14px; }
+    .trust-section p strong { color: var(--white); }
+    .inline-form-wrap.on-photo { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); backdrop-filter: blur(2px); box-shadow: none; }
+    .inline-form-wrap.on-photo h3 { color: var(--white); }
+    .inline-form-wrap.on-photo .fg label { color: var(--white); }
+    .inline-form-wrap.on-photo .form-note { color: rgba(255,255,255,0.75); }
 
     /* Inline form */
     .inline-form-wrap { max-width: 720px; margin: 36px auto 0; background: var(--white); border-radius: 8px; box-shadow: var(--shadow); padding: 32px 32px 24px; }
@@ -307,7 +312,6 @@
       .topnav { display: none; }
       .topbar { display: block; }
       .steps { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
-      .about-grid { grid-template-columns: 1fr; }
       .sit-grid { grid-template-columns: 1fr 1fr; }
       .comp-wrap { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
       .ben-grid { grid-template-columns: 1fr 1fr; }
@@ -473,25 +477,21 @@
 </section>
 
 <!-- ABOUT / LOCAL BUYERS -->
-<section id="about">
+<section id="about" class="trust-section">
   <div class="container">
-    <div class="about-grid">
-      <div class="about-img">
-        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80" alt="Richmond Virginia neighborhood" loading="lazy" />
-      </div>
-      <div class="about-content">
-        <h2 class="st">Local Cash Homebuyers In Richmond You Can Trust</h2>
-        <p>We're Good Life Property Group! As cash home buyers, we buy houses anywhere in Richmond and other parts of VA. Our <a href="#how-it-works" style="color:var(--navy);font-weight:700;">house buying process</a> is simple and, as a bonus, we can pay closing costs, too.</p>
-        <p>Our goal is to help sellers ease the stress and hassle of selling a house. <strong>Save time and money by selling to a professional cash homebuyer.</strong></p>
-        <p>Start the process today if you are serious about <strong>selling your Richmond property!</strong> Fill out the form below for a fast online quote, or call us at (804) 589-5300.</p>
-      </div>
+    <div class="trust-inner">
+      <img src="assets/img/logo-dark.png" alt="Good Life Property Group" class="trust-logo" />
+      <h2 class="st">Local Cash Homebuyers In Richmond You Can Trust</h2>
+      <p>We're Good Life Property Group! As cash home buyers, we buy houses anywhere in Richmond and other parts of VA. Our <a href="#how-it-works" style="color:var(--orange);font-weight:700;">house buying process</a> is simple and, as a bonus, we can pay closing costs, too.</p>
+      <p>Our goal is to help sellers ease the stress and hassle of selling a house. <strong>Save time and money by selling to a professional cash homebuyer.</strong></p>
+      <p>Start the process today if you are serious about <strong>selling your Richmond property!</strong> Fill out the form below for a fast online quote, or call us at (804) 589-5300.</p>
     </div>
     <!-- Second inline form -->
-    <div class="inline-form-wrap">
+    <div class="inline-form-wrap on-photo">
       <h3>Get An Offer Today, Sell In A Matter Of Days</h3>
       <div class="success-msg" id="form2-success">
         <h3>✅ Got It — We'll Be In Touch!</h3>
-        <p>Expect a call within 24 hours. Questions? <a href="tel:+18045895300" style="color:var(--navy);font-weight:700;">(804) 589-5300</a></p>
+        <p>Expect a call within 24 hours. Questions? <a href="tel:+18045895300" style="color:var(--orange);font-weight:700;">(804) 589-5300</a></p>
       </div>
       <form id="form2">
         <div class="fg">
