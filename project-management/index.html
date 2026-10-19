@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Good Life Property Group · BuildFlow</title>
+<meta name="theme-color" content="#0f2e22">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Good Life">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #0b1f17; }
+  body { -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  #root { height: 100dvh; }
+  button { font-family: inherit; }
+  input, select, textarea { font-family: inherit; font-size: 16px; }
+  input:focus, select:focus, textarea:focus { border-color: #d6a43c !important; box-shadow: 0 0 0 3px rgba(214,164,60,0.15); }
+  select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, #86a898 50%), linear-gradient(135deg, #86a898 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px !important; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #1f4334; border-radius: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  .bf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bf-kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .bf-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .bf-full { grid-column: 1 / -1; }
+  .bf-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .bf-chips::-webkit-scrollbar { display: none; }
+  .bf-row:hover { background: #163527; }
+  .bf-click { cursor: pointer; transition: transform .08s ease, border-color .15s ease; }
+  .bf-click:hover { border-color: #2c5a46 !important; }
+  .bf-click:active { transform: scale(0.99); }
+  .bottom-nav { display: none; }
+  .bf-spin { width: 16px; height: 16px; border: 2px solid #1f4334; border-top-color: #d6a43c; border-radius: 50%; animation: bfspin .7s linear infinite; }
+  @keyframes bfspin { to { transform: rotate(360deg); } }
+  @keyframes bfin { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .bf-modal { animation: bfin .16s ease-out; }
+  @media (max-width: 700px) {
+    .desktop-sidebar { display: none !important; }
+    .bottom-nav { display: flex; }
+    .bf-form { grid-template-columns: 1fr; }
+    .bf-content { padding: 14px !important; padding-bottom: 96px !important; }
+    .bf-hide-m { display: none !important; }
+    .bf-header-name { font-size: 15px !important; }
+    .bf-bflogo { height: 24px !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+//<![CDATA[
+
+// ════════════════════════════════════════════════════════════════════
+//  CONFIG — Good Life Property Group (customize here, nowhere else)
+// ════════════════════════════════════════════════════════════════════
+const CONFIG = {
+
+  // ── Branding ──
+  companyName:   "Good Life Property Group",
+  companyShort:  "Good Life",
+  tagline:       "Cash Home Buyers · Richmond, VA",
+  primaryColor:  "#0f2e22",          // deep green — nav, cards
+  accentColor:   "#d6a43c",          // warm gold — CTAs, highlights
+  logoText:      "G",
+  phone:         "(804) 589-5300",
+  website:       "https://goodlifepropertygroup.com",
+
+  // ── Project types ──
+  projectTypes: [
+    "Fix & Flip",
+    "Wholesale / Assignment",
+    "Buy & Hold",
+    "Rental Rehab",
+    "New Construction",
+  ],
+
+  // ── Project statuses (Sold = archived) ──
+  projectStatuses: ["Under Contract", "Active", "Listed", "Sold", "On Hold"],
+
+  // ── Expense categories ──
+  expenseCategories: [
+    "Acquisition",
+    "Closing Costs",
+    "Demo & Hauling",
+    "Cleanout",
+    "Framing",
+    "Roofing",
+    "HVAC",
+    "Plumbing",
+    "Electrical",
+    "Drywall",
+    "Flooring",
+    "Cabinets & Counters",
+    "Paint",
+    "Fixtures",
+    "Appliances",
+    "Landscaping",
+    "Permits & Fees",
+    "Carrying Costs",
+    "Selling Costs",
+    "Miscellaneous",
+  ],
+  // Categories that do NOT count against the rehab budget.
+  // "Acquisition" (down payment / EMD) is part of the purchase price, so it is never double-counted.
+  nonRehabCategories: ["Acquisition", "Closing Costs", "Carrying Costs", "Selling Costs"],
+
+  // ── Task categories / priorities / statuses ──
+  taskCategories: ["Financing", "Reno", "Admin", "Inspection", "Legal", "Interior", "Exterior"],
+  taskPriorities: ["Low", "Medium", "High", "Urgent"],
+  taskStatuses:   ["To Do", "In Progress", "Blocked", "Done"],
+
+  // ── Vendor categories ──
+  vendorCategories: [
+    "General Contractor",
+    "Cleanout / Junk Removal",
+    "Dumpster",
+    "Framing",
+    "Roofing",
+    "HVAC",
+    "Plumbing",
+    "Electrical",
+    "Flooring",
+    "Painting",
+    "Landscaping",
+    "Pest Control",
+    "Locksmith",
+    "Supplier",
+    "Inspector",
+    "Attorney / Title",
+    "Lender",
+    "Realtor",
+    "Insurance",
+    "Photographer / Stager",
+    "Other",
+  ],
+
+  // ── Financial field labels ──
+  financialFields: {
+    purchasePrice: "Purchase Price",
+    rehabBudget:   "Rehab Budget",
+    loanAmount:    "Loan Amount",
+    arvLabel:      "ARV (Est.)",
+  },
+
+  // ── Management section ──
+  managementLabel: "Company",
+  pipelineLabel:   "Deal Pipeline",
+
+  // ── Seller-lead pipeline (mirrors the situations on goodlifepropertygroup.com) ──
+  leadStages: ["New Lead", "Contacted", "Appointment Set", "Offer Made", "Under Contract", "Closed", "Dead"],
+  leadSituations: [
+    "Inherited Property",
+    "Divorce",
+    "Foreclosure / Tax Default",
+    "Relocating",
+    "Tired Landlord",
+    "Problem Tenants",
+    "Liens",
+    "Underwater Mortgage",
+    "Fire Damage / Uninhabitable",
+    "Vacant",
+    "Other",
+  ],
+  leadSources: ["Website", "Phone Call", "Direct Mail", "Facebook", "Instagram", "Referral", "Driving for Dollars", "Wholesaler", "Other"],
+
+  // ── Deal math ──
+  maoPercent:     0.70,   // MAO = ARV × 70% − repairs
+  sellingCostPct: 0.08,   // estimated agent + closing costs on resale
+
+  // ── Backend (also set in Apps Script) ──
+  notifyEmail: "YOUR_NOTIFY_EMAIL",
+  sheetId:     "YOUR_GOOGLE_SHEET_ID_HERE",
+
+  // ── Theme tokens (derived from primary/accent) ──
+  theme: {
+    bg:      "#0b1f17",
+    card:    "#11291f",
+    cardAlt: "#0e2419",
+    border:  "#1f4334",
+    deep:    "#071510",
+    hover:   "#163527",
+    text:    "#f4efe0",
+    body:    "#c9d6cf",
+    muted:   "#86a898",
+    label:   "#5f8a76",
+  },
+};
+
+// Cloudflare Worker URL. While it still contains "YOUR-", the app runs in DEMO mode
+// with sample data kept in this browser only.
+const API_URL = "https://goodlife-buildflow.YOUR-SUBDOMAIN.workers.dev/";
+const DEMO = API_URL.indexOf("YOUR-") >= 0;
+
+// ════════════════════════════════════════════════════════════════════
+//  Core helpers
+// ════════════════════════════════════════════════════════════════════
+const { useState, useEffect, useRef, useMemo } = React;
+const e = React.createElement;
+const T = CONFIG.theme;
+const GOLD = CONFIG.accentColor;
+const C = { green: "#10b981", amber: "#f59e0b", red: "#ef4444", cyan: "#06b6d4", purple: "#8b5cf6", blue: "#60a5fa" };
+
+const S = {
+  root: { display: "flex", flexDirection: "column", height: "100dvh", background: T.bg, color: T.body, fontFamily: "'Inter',system-ui,sans-serif", overflow: "hidden" },
+  header: { background: CONFIG.primaryColor, borderBottom: "1px solid " + T.border, padding: "0 16px", minHeight: 56, paddingTop: "env(safe-area-inset-top)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: 12 },
+  sidebar: { width: 230, background: T.cardAlt, borderRight: "1px solid " + T.border, overflowY: "auto", flexShrink: 0, padding: "8px 0", display: "flex", flexDirection: "column" },
+  content: { flex: 1, overflowY: "auto", padding: 22 },
+  card: { background: T.card, border: "1px solid " + T.border, borderRadius: 12, padding: 16, marginBottom: 12 },
+  input: { width: "100%", background: T.deep, border: "1px solid " + T.border, borderRadius: 8, padding: "10px 12px", color: T.text, fontSize: 15, fontFamily: "inherit", outline: "none" },
+  label: { display: "block", fontSize: 11, fontWeight: 700, color: T.label, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 },
+  h1: { fontWeight: 900, letterSpacing: "-0.5px", color: T.text, fontSize: 22, margin: 0 },
+  h2: { fontWeight: 800, letterSpacing: "-0.3px", color: T.text, fontSize: 16, margin: 0 },
+  sub: { fontSize: 13, color: T.muted },
+  btn: (variant) => {
+    const base = { borderRadius: 8, padding: "10px 16px", cursor: "pointer", fontSize: 14, fontWeight: 700, fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" };
+    if (variant === "ghost") return Object.assign(base, { background: "transparent", border: "1px solid " + T.border, color: T.muted, fontWeight: 600 });
+    if (variant === "danger") return Object.assign(base, { background: "transparent", border: "1px solid #5b2323", color: C.red, fontWeight: 600 });
+    if (variant === "small") return Object.assign(base, { background: "transparent", border: "1px solid " + T.border, color: T.muted, padding: "5px 10px", fontSize: 12, fontWeight: 600 });
+    return Object.assign(base, { background: GOLD, color: CONFIG.primaryColor, border: "none" });
+  },
+  sideLabel: { fontSize: 10, fontWeight: 700, color: T.label, textTransform: "uppercase", letterSpacing: "0.12em", padding: "12px 16px 4px" },
+  sideItem: (active, indent) => ({
+    padding: indent ? "7px 16px 7px 30px" : "8px 16px", cursor: "pointer", fontSize: indent ? 12.5 : 13, fontWeight: active ? 700 : 500,
+    color: active ? GOLD : T.muted, background: active ? T.hover : "transparent",
+    borderLeft: active ? "2px solid " + GOLD : "2px solid transparent",
+    display: "flex", alignItems: "center", gap: 8, userSelect: "none",
+  }),
+  chip: (active, color) => ({
+    padding: "6px 12px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", userSelect: "none",
+    border: "1px solid " + (active ? (color || GOLD) : T.border),
+    background: active ? (color || GOLD) + "22" : "transparent",
+    color: active ? (color || GOLD) : T.muted,
+  }),
+  badge: (color) => ({ display: "inline-block", padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700, color: color, background: color + "1f", border: "1px solid " + color + "44", whiteSpace: "nowrap" }),
+};
+
+const TASK_STATUS_COLORS = { "To Do": "#86a898", "In Progress": C.amber, "Blocked": C.red, "Done": C.green };
+const PRIORITY_COLORS = { "Low": "#86a898", "Medium": C.blue, "High": C.amber, "Urgent": C.red };
+const PROJECT_STATUS_COLORS = { "Under Contract": C.cyan, "Active": GOLD, "Listed": C.purple, "Sold": C.green, "On Hold": "#86a898" };
+const LEAD_STAGE_COLORS = { "New Lead": C.blue, "Contacted": C.cyan, "Appointment Set": C.purple, "Offer Made": C.amber, "Under Contract": GOLD, "Closed": C.green, "Dead": "#64748b" };
+const MS_STATUS = ["upcoming", "in-progress", "done"];
+const MS_STATUS_COLORS = { "upcoming": "#86a898", "in-progress": C.amber, "done": C.green };
+
+const USD0 = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const USD2 = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const money = (n) => USD0.format(Number(n) || 0);
+const money2 = (n) => USD2.format(Number(n) || 0);
+const num = (v) => { if (typeof v === "number") return v; const n = parseFloat(String(v == null ? "" : v).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? 0 : n; };
+const isoOf = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const todayISO = () => isoOf(new Date());
+const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return isoOf(d); };
+const dateOnly = (s) => (s ? String(s).slice(0, 10) : "");
+const fmtDate = (s) => {
+  if (!s) return "";
+  const parts = dateOnly(s).split("-").map(Number);
+  if (!parts[0] || !parts[1]) return String(s);
+  const d = new Date(parts[0], parts[1] - 1, parts[2] || 1);
+  const opts = { month: "short", day: "numeric" };
+  if (parts[0] !== new Date().getFullYear()) opts.year = "numeric";
+  return d.toLocaleDateString("en-US", opts);
+};
+const isOverdue = (s, done) => !!s && !done && todayISO() > dateOnly(s);
+const genId = (p) => p + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const slugify = (s) => (String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "project");
+const pct = (a, b) => (b > 0 ? Math.min(100, Math.round((a / b) * 100)) : 0);
+const isGeneral = (p) => p && (p.id === "general-expenses" || String(p.description || "").indexOf("No budget") >= 0);
+const byDate = (a, b) => String(dateOnly(a) || "9999").localeCompare(String(dateOnly(b) || "9999"));
+const telHref = (p) => "tel:" + String(p || "").replace(/[^0-9+]/g, "");
+
+// Deal math for a project + its expense totals by category
+function calcDeal(p, byCat) {
+  byCat = byCat || {};
+  const nonRehab = CONFIG.nonRehabCategories;
+  let rehabSpent = 0, closing = 0, carrying = 0, selling = 0, totalSpent = 0;
+  Object.keys(byCat).forEach((cat) => {
+    const v = num(byCat[cat]);
+    totalSpent += v;
+    if (nonRehab.indexOf(cat) === -1) rehabSpent += v;
+    if (cat === "Closing Costs") closing += v;
+    if (cat === "Carrying Costs") carrying += v;
+    if (cat === "Selling Costs") selling += v;
+  });
+  const purchase = num(p.purchasePrice), budget = num(p.rehabBudget), arv = num(p.arv), loan = num(p.loanAmount);
+  const projRehab = Math.max(budget, rehabSpent);
+  const estSelling = Math.max(arv * CONFIG.sellingCostPct, selling);
+  const allIn = purchase + projRehab + closing + carrying + estSelling;
+  const profit = arv > 0 ? arv - allIn : 0;
+  const cashIn = Math.max(0, purchase + projRehab + closing + carrying - loan);
+  return { purchase, budget, arv, loan, rehabSpent, closing, carrying, selling, estSelling, projRehab, allIn, profit, totalSpent,
+           remaining: budget - rehabSpent, roi: allIn > 0 ? (profit / allIn) * 100 : 0, cashIn };
+}
+const calcMAO = (arv, repairs) => num(arv) * CONFIG.maoPercent - num(repairs);
+
+// ════════════════════════════════════════════════════════════════════
+//  DEMO backend (only used while API_URL is not configured)
+// ════════════════════════════════════════════════════════════════════
+const DEMO_KEY = "bf_goodlife_demo_v1";
+function demoSeed() {
+  const pid1 = "1208-oak-st-sample", pid2 = "77-maple-ave-sample";
+  return {
+    projects: [
+      { id: pid1, name: "1208 Oak St (Sample)", description: "Sample project — delete anytime", purchasePrice: 185000, rehabBudget: 55000, loanAmount: 196000, arv: 315000, status: "Active", type: "Fix & Flip", address: "1208 Oak St, Richmond, VA", startDate: addDays(-26) },
+      { id: pid2, name: "77 Maple Ave (Sample)", description: "Sample project — delete anytime", purchasePrice: 142000, rehabBudget: 38000, loanAmount: 150000, arv: 239000, status: "Under Contract", type: "Fix & Flip", address: "77 Maple Ave, Henrico, VA", startDate: addDays(9) },
+      { id: "general-expenses", name: "General Expenses", description: "Company-wide expenses | No budget", purchasePrice: 0, rehabBudget: 0, loanAmount: 0, arv: 0, status: "General", type: "General" },
+    ],
+    expenses: {
+      [pid1]: [
+        { id: "x1", date: addDays(-30), description: "Earnest money deposit", amount: 2500, category: "Acquisition", vendor: "Sample Title Co.", notes: "", projectId: pid1 },
+        { id: "x2", date: addDays(-26), description: "Settlement — closing costs", amount: 6840.5, category: "Closing Costs", vendor: "Sample Title Co.", notes: "", projectId: pid1 },
+        { id: "x3", date: addDays(-24), description: "Full cleanout + 2 hauls", amount: 1850, category: "Cleanout", vendor: "Sample Junk Removal", notes: "", projectId: pid1 },
+        { id: "x4", date: addDays(-20), description: "Kitchen & bath demo", amount: 3200, category: "Demo & Hauling", vendor: "Sample Demo Crew", notes: "", projectId: pid1 },
+        { id: "x5", date: addDays(-12), description: "Architectural shingles — full roof", amount: 9800, category: "Roofing", vendor: "Sample Roofing", notes: "Accepted quote", projectId: pid1 },
+        { id: "x6", date: addDays(-6), description: "LVP materials", amount: 4120, category: "Flooring", vendor: "Sample Flooring Supply", notes: "", projectId: pid1 },
+        { id: "x7", date: addDays(-3), description: "Hard money interest — month 1", amount: 1633, category: "Carrying Costs", vendor: "Sample Lender", notes: "", projectId: pid1 },
+      ],
+      "general-expenses": [
+        { id: "g1", date: addDays(-15), description: "Direct mail campaign", amount: 1200, category: "Miscellaneous", vendor: "Sample Mail House", notes: "Absentee owners list", projectId: "general-expenses" },
+      ],
+    },
+    tasks: {
+      [pid1]: [
+        { id: "t1", task: "Schedule electrical rough-in inspection", status: "To Do", assignee: "", dueDate: addDays(2), notes: "", createdAt: new Date().toISOString(), category: "Inspection", priority: "High", milestone: "m2", projectId: pid1 },
+        { id: "t2", task: "Pick cabinet + quartz package", status: "In Progress", assignee: "", dueDate: addDays(5), notes: "", createdAt: new Date().toISOString(), category: "Interior", priority: "Medium", milestone: "m3", projectId: pid1 },
+        { id: "t3", task: "Roof replacement", status: "Done", assignee: "", dueDate: addDays(-10), notes: "", createdAt: new Date().toISOString(), category: "Exterior", priority: "High", milestone: "m1", projectId: pid1 },
+        { id: "t4", task: "Submit draw #1 to lender", status: "Blocked", assignee: "", dueDate: addDays(-1), notes: "Waiting on inspector photos", createdAt: new Date().toISOString(), category: "Financing", priority: "Urgent", milestone: "", projectId: pid1 },
+      ],
+    },
+    quotes: {
+      [pid1]: [
+        { id: "q1", item: "HVAC replacement", vendor: "Sample HVAC A", amount: 7400, status: "Pending", category: "HVAC", notes: "3-ton heat pump", projectId: pid1 },
+        { id: "q2", item: "HVAC replacement", vendor: "Sample HVAC B", amount: 6850, status: "Pending", category: "HVAC", notes: "Includes new thermostat", projectId: pid1 },
+      ],
+    },
+    milestones: {
+      [pid1]: [
+        { id: "m1", date: addDays(-10), week: "Demo & Exterior", items: [{ type: "Exterior", text: "New roof" }, { type: "Interior", text: "Full demo complete" }] },
+        { id: "m2", date: addDays(7), week: "Rough-ins & Inspections", items: [{ type: "Inspection", text: "Electrical + plumbing rough-in pass" }] },
+        { id: "m3", date: addDays(21), week: "Finishes", items: [{ type: "Interior", text: "Cabinets, counters, LVP, paint" }] },
+      ],
+    },
+    vendors: {
+      "Dumpster": [{ id: "v1", name: "Sample Dumpster Co.", phone: "(804) 555-0101", email: "", notes: "20-yd, ~$450/haul" }],
+      "Roofing": [{ id: "v2", name: "Sample Roofing", phone: "(804) 555-0144", email: "office@example.com", notes: "Did 1208 Oak" }],
+    },
+    vendorCats: null,
+    mgmt: {
+      mgmtTasks: [{ id: "mt1", task: "Renew LLC annual report", status: "To Do", assignee: "", dueDate: addDays(14), priority: "Medium", notes: "" }],
+      mgmtMilestones: [{ id: "mm1", date: addDays(60), week: "Close 3 flips this quarter", notes: "", status: "in-progress" }],
+    },
+    leads: [
+      { id: "l1", address: "450 Pine Rd, Chesterfield, VA", sellerName: "Sample Seller", phone: "(804) 555-0177", email: "", situation: "Inherited Property", source: "Website", stage: "Offer Made", askingPrice: 210000, offerPrice: 168000, arv: 295000, repairEst: 42000, nextFollowUp: addDays(1), notes: "Siblings agree to sell; house vacant", projectId: "", createdAt: new Date().toISOString() },
+      { id: "l2", address: "19 Birch Ct, Richmond, VA", sellerName: "Sample Landlord", phone: "(804) 555-0190", email: "", situation: "Tired Landlord", source: "Direct Mail", stage: "New Lead", askingPrice: 0, offerPrice: 0, arv: 0, repairEst: 0, nextFollowUp: todayISO(), notes: "Tenant moving out next month", projectId: "", createdAt: new Date().toISOString() },
+      { id: "l3", address: "2210 Cedar Ln, Henrico, VA", sellerName: "Sample Owner", phone: "", email: "", situation: "Fire Damage / Uninhabitable", source: "Phone Call", stage: "Appointment Set", askingPrice: 95000, offerPrice: 0, arv: 240000, repairEst: 85000, nextFollowUp: addDays(-1), notes: "Walkthrough Thursday", projectId: "", createdAt: new Date().toISOString() },
+    ],
+  };
+}
+let demoDB = null;
+function demoLoad() {
+  if (demoDB) return demoDB;
+  try { const raw = window.localStorage.getItem(DEMO_KEY); if (raw) demoDB = JSON.parse(raw); } catch (err) { /* storage unavailable */ }
+  if (!demoDB) demoDB = demoSeed();
+  return demoDB;
+}
+function demoSave() { try { window.localStorage.setItem(DEMO_KEY, JSON.stringify(demoDB)); } catch (err) { /* in-memory only */ } }
+function upsertIn(list, obj) { const i = list.findIndex((x) => x.id === obj.id); if (i >= 0) list[i] = Object.assign({}, list[i], obj); else list.push(obj); }
+async function demoApi(action, x) {
+  await new Promise((r) => setTimeout(r, 120));
+  const db = demoLoad();
+  const clone = (v) => JSON.parse(JSON.stringify(v));
+  const list = (k, pid) => { db[k][pid] = db[k][pid] || []; return db[k][pid]; };
+  let res = { success: true };
+  switch (action) {
+    case "auth": break;
+    case "getProjects": res = { projects: clone(db.projects) }; break;
+    case "addProject": case "updateProject": upsertIn(db.projects, x.project); break;
+    case "deleteProject": db.projects = db.projects.filter((p) => p.id !== x.projectId); delete db.expenses[x.projectId]; delete db.tasks[x.projectId]; delete db.quotes[x.projectId]; break;
+    case "getSummary": {
+      const summary = {};
+      db.projects.forEach((p) => {
+        const byCat = {}; (db.expenses[p.id] || []).forEach((ex) => { byCat[ex.category] = (byCat[ex.category] || 0) + num(ex.amount); });
+        const openTasks = (db.tasks[p.id] || []).filter((t) => t.status !== "Done").length;
+        summary[p.id] = { byCat, openTasks };
+      });
+      res = { summary }; break;
+    }
+    case "getExpenses": res = { expenses: clone(list("expenses", x.projectId)) }; break;
+    case "addExpense": case "updateExpense": upsertIn(list("expenses", x.projectId), Object.assign({}, x.expense, { projectId: x.projectId })); break;
+    case "deleteExpense": db.expenses[x.projectId] = list("expenses", x.projectId).filter((r) => r.id !== x.expenseId); break;
+    case "getTasks": res = { tasks: clone(list("tasks", x.projectId)) }; break;
+    case "addTask": case "updateTask": upsertIn(list("tasks", x.projectId), Object.assign({ createdAt: new Date().toISOString() }, x.task, { projectId: x.projectId })); break;
+    case "deleteTask": db.tasks[x.projectId] = list("tasks", x.projectId).filter((r) => r.id !== x.taskId); break;
+    case "getQuotes": res = { quotes: clone(list("quotes", x.projectId)) }; break;
+    case "addQuote": case "updateQuote": upsertIn(list("quotes", x.projectId), Object.assign({}, x.quote, { projectId: x.projectId })); break;
+    case "deleteQuote": db.quotes[x.projectId] = list("quotes", x.projectId).filter((r) => r.id !== x.quoteId); break;
+    case "acceptQuote": {
+      const qs = list("quotes", x.projectId); const q = qs.find((r) => r.id === x.quoteId);
+      if (!q) throw new Error("Quote not found");
+      qs.forEach((r) => { if (r.id === q.id) r.status = "Accepted"; else if (String(r.item).trim().toLowerCase() === String(q.item).trim().toLowerCase() && r.status === "Pending") r.status = "Rejected"; });
+      upsertIn(list("expenses", x.projectId), { id: "qte-" + q.id, date: todayISO(), description: q.item, amount: num(q.amount), category: q.category || "Miscellaneous", vendor: q.vendor, notes: "Converted from accepted quote", projectId: x.projectId });
+      break;
+    }
+    case "getMilestones": res = { milestones: clone(db.milestones) }; break;
+    case "saveMilestones": db.milestones[x.projectId] = x.milestones; break;
+    case "getVendors": res = { vendors: clone(db.vendors), categories: db.vendorCats }; break;
+    case "saveVendors": db.vendors = x.vendors; db.vendorCats = x.categories; break;
+    case "getMgmtData": res = { data: clone(db.mgmt) }; break;
+    case "saveMgmtData": db.mgmt[x.key] = x.value; break;
+    case "getLeads": res = { leads: clone(db.leads) }; break;
+    case "addLead": case "updateLead": upsertIn(db.leads, x.lead); break;
+    case "deleteLead": db.leads = db.leads.filter((l) => l.id !== x.leadId); break;
+    default: throw new Error("Unknown action: " + action);
+  }
+  demoSave();
+  return res;
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  API
+// ════════════════════════════════════════════════════════════════════
+let SESSION_PIN = "";
+async function api(action, extra) {
+  extra = extra || {};
+  if (DEMO) return demoApi(action, extra);
+  const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(Object.assign({ pin: SESSION_PIN, action: action }, extra)) });
+  let data;
+  try { data = await res.json(); } catch (err) { throw new Error("Server returned an unexpected response"); }
+  if (data && data.error) throw new Error(data.error);
+  return data;
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  Small UI pieces
+// ════════════════════════════════════════════════════════════════════
+const kids = (arr) => arr.filter(Boolean);
+
+function LogoMark(props) {
+  const size = props.size || 32;
+  return e("div", { style: { width: size, height: size, borderRadius: size / 4, background: GOLD, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: size / 2, color: CONFIG.primaryColor, flexShrink: 0 } }, CONFIG.logoText);
+}
+
+function Header(props) {
+  return e("div", { style: S.header },
+    e("div", { style: { display: "flex", alignItems: "center", gap: 10, minWidth: 0 } },
+      e(LogoMark),
+      e("span", { className: "bf-header-name", style: { fontWeight: 800, fontSize: 18, color: T.text, letterSpacing: "-0.5px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, CONFIG.companyName),
+      props.busy ? e("div", { className: "bf-spin", style: { marginLeft: 4 } }) : null,
+      DEMO ? e("span", { style: Object.assign(S.badge(C.amber), { marginLeft: 4 }) }, "DEMO") : null
+    ),
+    e("img", { className: "bf-bflogo", src: "./buildflow-logo.png", alt: "BuildFlow by Weblina LLC", style: { height: 32, opacity: 0.9, flexShrink: 0 }, onError: (ev) => { ev.target.style.display = "none"; } })
+  );
+}
+
+function Stat(props) {
+  return e("div", { style: Object.assign({}, S.card, { marginBottom: 0, padding: 14 }) },
+    e("div", { style: S.label }, props.label),
+    e("div", { style: { fontSize: 20, fontWeight: 800, color: props.color || T.text, letterSpacing: "-0.5px" } }, props.value),
+    props.sub ? e("div", { style: Object.assign({}, S.sub, { fontSize: 12, marginTop: 2 }) }, props.sub) : null
+  );
+}
+
+function Bar(props) {
+  const p = Math.max(0, Math.min(100, props.value || 0));
+  return e("div", { style: { height: props.height || 6, background: T.deep, borderRadius: 99, overflow: "hidden" } },
+    e("div", { style: { width: p + "%", height: "100%", background: props.color || GOLD, borderRadius: 99, transition: "width .3s" } }));
+}
+
+function Empty(props) {
+  return e("div", { style: Object.assign({}, S.card, { textAlign: "center", padding: "36px 20px", borderStyle: "dashed" }) },
+    e("div", { style: { fontSize: 28, marginBottom: 6 } }, props.icon || "📋"),
+    e("div", { style: { color: T.text, fontWeight: 700, marginBottom: 4 } }, props.title),
+    props.text ? e("div", { style: S.sub }, props.text) : null,
+    props.action ? e("div", { style: { marginTop: 14 } }, props.action) : null
+  );
+}
+
+function PageHead(props) {
+  return e("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 16, flexWrap: "wrap" } },
+    e("div", { style: { minWidth: 0 } },
+      props.eyebrow ? e("div", { style: Object.assign({}, S.label, { color: GOLD, marginBottom: 4 }) }, props.eyebrow) : null,
+      e("h1", { style: S.h1 }, props.title),
+      props.sub ? e("div", { style: Object.assign({}, S.sub, { marginTop: 4 }) }, props.sub) : null
+    ),
+    props.actions ? e("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, props.actions) : null
+  );
+}
+
+function Chips(props) {
+  return e("div", { className: "bf-chips", style: { marginBottom: 14 } },
+    props.options.map((o) => {
+      const val = typeof o === "string" ? o : o.value;
+      const lbl = typeof o === "string" ? o : o.label;
+      return e("div", { key: val, style: S.chip(props.value === val, o.color), onClick: () => props.onChange(val) }, lbl);
+    }));
+}
+
+function Toast(props) {
+  if (!props.toast) return null;
+  const err = props.toast.kind === "error";
+  return e("div", { style: { position: "fixed", left: "50%", transform: "translateX(-50%)", bottom: 90, zIndex: 9999, background: err ? "#3b1414" : T.card, border: "1px solid " + (err ? "#7f1d1d" : GOLD), color: err ? "#fecaca" : T.text, padding: "10px 16px", borderRadius: 10, fontSize: 14, fontWeight: 600, boxShadow: "0 10px 30px rgba(0,0,0,.4)", maxWidth: "90vw" } }, props.toast.msg);
+}
+
+// In-app confirm dialog (native confirm() is blocked in some embedded views)
+let confirmSetter = null;
+function askConfirm(msg, okLabel, danger) {
+  return new Promise((resolve) => {
+    if (!confirmSetter) { resolve(window.confirm(msg)); return; }
+    confirmSetter({ msg, okLabel: okLabel || "Confirm", danger: !!danger, resolve });
+  });
+}
+function ConfirmHost() {
+  const [c, setC] = useState(null);
+  useEffect(() => { confirmSetter = setC; return () => { confirmSetter = null; }; }, []);
+  if (!c) return null;
+  const done = (v) => { setC(null); c.resolve(v); };
+  return e("div", { style: { position: "fixed", inset: 0, background: "rgba(2,8,5,.72)", zIndex: 1100, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }, onMouseDown: (ev) => { if (ev.target === ev.currentTarget) done(false); } },
+    e("div", { className: "bf-modal", role: "alertdialog", style: Object.assign({}, S.card, { maxWidth: 420, width: "100%", padding: 20, marginBottom: 0 }) },
+      e("div", { style: { color: T.text, fontSize: 15, lineHeight: 1.5, marginBottom: 18 } }, c.msg),
+      e("div", { style: { display: "flex", justifyContent: "flex-end", gap: 8 } },
+        e("button", { type: "button", style: S.btn("ghost"), onClick: () => done(false) }, "Cancel"),
+        e("button", { type: "button", autoFocus: true, style: c.danger ? Object.assign(S.btn(), { background: C.red, color: "#fff" }) : S.btn(), onClick: () => done(true) }, c.okLabel))));
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  Generic form modal — every add/edit form uses this
+// ════════════════════════════════════════════════════════════════════
+function FormModal(props) {
+  const fields = props.fields;
+  const [v, setV] = useState(() => {
+    const o = {};
+    fields.forEach((f) => {
+      const init = props.initial && props.initial[f.key] != null ? props.initial[f.key] : (f.default != null ? f.default : "");
+      o[f.key] = f.type === "date" ? dateOnly(init) : init;
+    });
+    return o;
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const set = (k, val) => setV((p) => Object.assign({}, p, { [k]: val }));
+
+  const submit = async (ev) => {
+    ev.preventDefault();
+    for (const f of fields) {
+      if (f.required && !String(v[f.key] == null ? "" : v[f.key]).trim()) { setError(f.label + " is required"); return; }
+    }
+    const out = {};
+    fields.forEach((f) => { out[f.key] = f.type === "money" || f.type === "number" ? num(v[f.key]) : (typeof v[f.key] === "string" ? v[f.key].trim() : v[f.key]); });
+    setSaving(true); setError("");
+    try { await props.onSave(out); }
+    catch (err) { setError(err.message || String(err)); setSaving(false); }
+  };
+
+  const doDelete = async () => {
+    if (!(await askConfirm(props.deleteConfirm || "Delete this item? This can't be undone.", "Delete", true))) return;
+    setSaving(true);
+    try { await props.onDelete(); } catch (err) { setError(err.message || String(err)); setSaving(false); }
+  };
+
+  const renderField = (f) => {
+    const common = { value: v[f.key] == null ? "" : v[f.key], onChange: (ev) => set(f.key, ev.target.value), style: S.input, id: "f-" + f.key };
+    let input;
+    if (f.type === "select") {
+      input = e("select", common, kids([
+        f.placeholder ? e("option", { key: "__", value: "" }, f.placeholder) : null,
+      ].concat((f.options || []).map((o) => {
+        const val = typeof o === "string" ? o : o.value; const lbl = typeof o === "string" ? o : o.label;
+        return e("option", { key: val, value: val }, lbl);
+      }))));
+    } else if (f.type === "textarea") {
+      input = e("textarea", Object.assign({}, common, { rows: f.rows || 3, placeholder: f.placeholder || "", style: Object.assign({}, S.input, { resize: "vertical", minHeight: 70 }) }));
+    } else if (f.type === "money") {
+      input = e("div", { style: { position: "relative" } },
+        e("span", { style: { position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: T.label, fontSize: 15 } }, "$"),
+        e("input", Object.assign({}, common, { inputMode: "decimal", placeholder: "0", style: Object.assign({}, S.input, { paddingLeft: 24 }) })));
+    } else {
+      input = e("input", Object.assign({}, common, { type: f.type === "date" ? "date" : (f.type === "email" ? "email" : (f.type === "tel" ? "tel" : "text")), placeholder: f.placeholder || "", list: f.datalist ? "dl-" + f.key : undefined }));
+    }
+    return e("div", { key: f.key, className: f.half ? "" : "bf-full" },
+      e("label", { style: S.label, htmlFor: "f-" + f.key }, f.label + (f.required ? " *" : "")),
+      input,
+      f.datalist ? e("datalist", { id: "dl-" + f.key }, f.datalist.map((d) => e("option", { key: d, value: d }))) : null,
+      f.hint ? e("div", { style: { fontSize: 11.5, color: T.label, marginTop: 4 } }, f.hint) : null
+    );
+  };
+
+  return e("div", { style: { position: "fixed", inset: 0, background: "rgba(2,8,5,.72)", zIndex: 1000, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "max(24px, env(safe-area-inset-top)) 12px 24px", overflowY: "auto" }, onMouseDown: (ev) => { if (ev.target === ev.currentTarget) props.onClose(); } },
+    e("form", { className: "bf-modal", onSubmit: submit, style: Object.assign({}, S.card, { width: "100%", maxWidth: props.wide ? 640 : 520, padding: 20, marginBottom: 0, boxShadow: "0 30px 80px rgba(0,0,0,.5)" }) },
+      e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 } },
+        e("h2", { style: Object.assign({}, S.h2, { fontSize: 18 }) }, props.title),
+        e("button", { type: "button", onClick: props.onClose, style: { background: "none", border: "none", color: T.muted, fontSize: 22, cursor: "pointer", lineHeight: 1 }, "aria-label": "Close" }, "×")),
+      e("div", { className: "bf-form" }, fields.map(renderField)),
+      props.preview ? e("div", { style: { marginTop: 14 } }, props.preview(v)) : null,
+      error ? e("div", { style: { marginTop: 12, color: "#fca5a5", fontSize: 13, fontWeight: 600 } }, error) : null,
+      e("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, marginTop: 18, flexWrap: "wrap" } },
+        props.onDelete ? e("button", { type: "button", style: S.btn("danger"), onClick: doDelete, disabled: saving }, "Delete") : e("span"),
+        e("div", { style: { display: "flex", gap: 8 } },
+          e("button", { type: "button", style: S.btn("ghost"), onClick: props.onClose }, "Cancel"),
+          e("button", { type: "submit", style: Object.assign(S.btn(), { opacity: saving ? 0.6 : 1 }), disabled: saving }, saving ? "Saving…" : (props.saveLabel || "Save"))))
+    ));
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  Login
+// ════════════════════════════════════════════════════════════════════
+function Login(props) {
+  const [pin, setPin] = useState(DEMO ? "demo" : "");
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const submit = async (ev) => {
+    ev.preventDefault();
+    if (!pin) return;
+    setBusy(true); setErr("");
+    SESSION_PIN = pin;
+    try { await api("auth"); props.onAuthed(); }
+    catch (x) { SESSION_PIN = ""; setErr(x.message === "Unauthorized" ? "Incorrect PIN" : x.message); setBusy(false); }
+  };
+  return e("div", { style: { minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "radial-gradient(1200px 600px at 50% -10%, " + CONFIG.primaryColor + ", " + T.bg + ")" } },
+    e("form", { onSubmit: submit, style: Object.assign({}, S.card, { width: "100%", maxWidth: 380, padding: 28, textAlign: "center" }) },
+      e("div", { style: { display: "flex", justifyContent: "center", marginBottom: 14 } }, e(LogoMark, { size: 56 })),
+      e("h1", { style: Object.assign({}, S.h1, { fontSize: 22 }) }, CONFIG.companyName),
+      e("div", { style: Object.assign({}, S.sub, { marginTop: 4, marginBottom: 22 }) }, CONFIG.tagline),
+      e("input", { type: "password", inputMode: "numeric", autoComplete: "current-password", placeholder: "Enter PIN", value: pin, onChange: (ev) => setPin(ev.target.value), style: Object.assign({}, S.input, { textAlign: "center", fontSize: 20, letterSpacing: "0.3em", padding: "14px 12px" }) }),
+      err ? e("div", { style: { color: "#fca5a5", fontSize: 13, marginTop: 10, fontWeight: 600 } }, err) : null,
+      e("button", { type: "submit", disabled: busy, style: Object.assign(S.btn(), { width: "100%", justifyContent: "center", marginTop: 14, padding: "13px 16px", fontSize: 15 }) }, busy ? "Checking…" : "Unlock"),
+      DEMO ? e("div", { style: { fontSize: 12, color: C.amber, marginTop: 14, lineHeight: 1.5 } }, "Demo mode — sample data stays in this browser. Connect the Worker URL to go live.") : null,
+      e("div", { style: { fontSize: 11, color: T.label, marginTop: 18 } }, "Powered by BuildFlow · Weblina LLC")
+    ));
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  HOME
+// ════════════════════════════════════════════════════════════════════
+function ProjectCard(props) {
+  const p = props.project, d = props.deal;
+  const color = PROJECT_STATUS_COLORS[p.status] || T.muted;
+  const used = pct(d.rehabSpent, d.budget);
+  return e("div", { className: "bf-click", style: Object.assign({}, S.card, { marginBottom: 0 }), onClick: props.onOpen },
+    e("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, alignItems: "flex-start" } },
+      e("div", { style: { minWidth: 0 } },
+        e("div", { style: Object.assign({}, S.h2, { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }) }, p.name),
+        e("div", { style: Object.assign({}, S.sub, { fontSize: 12, marginTop: 2 }) }, kids([p.type, p.address && p.address !== p.name ? p.address : null]).join(" · "))),
+      e("span", { style: S.badge(color) }, p.status || "Active")),
+    e("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, margin: "14px 0 12px" } },
+      [[CONFIG.financialFields.purchasePrice, money(d.purchase)], [CONFIG.financialFields.arvLabel, d.arv ? money(d.arv) : "—"], ["Proj. Profit", d.arv ? money(d.profit) : "—", d.profit >= 0 ? C.green : C.red]].map((x) =>
+        e("div", { key: x[0] }, e("div", { style: Object.assign({}, S.label, { fontSize: 9.5, marginBottom: 2 }) }, x[0]), e("div", { style: { fontWeight: 800, color: x[2] || T.text, fontSize: 14 } }, x[1])))),
+    e("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 5 } },
+      e("span", { style: { color: T.muted } }, "Rehab " + money(d.rehabSpent) + " of " + money(d.budget)),
+      e("span", { style: { color: used >= 100 ? C.red : T.muted, fontWeight: 700 } }, used + "%")),
+    e(Bar, { value: used, color: used >= 100 ? C.red : (used >= 85 ? C.amber : GOLD) }),
+    props.openTasks ? e("div", { style: { fontSize: 12, color: T.muted, marginTop: 10 } }, "✓ " + props.openTasks + " open task" + (props.openTasks === 1 ? "" : "s")) : null
+  );
+}
+
+function HomeView({ ctx }) {
+  const [filter, setFilter] = useState("Open");
+  const real = ctx.projects.filter((p) => !isGeneral(p));
+  const shown = real.filter((p) => filter === "All" ? true : filter === "Sold" ? p.status === "Sold" : p.status !== "Sold");
+  const open = real.filter((p) => p.status !== "Sold");
+  const deals = {}; real.forEach((p) => { deals[p.id] = calcDeal(p, (ctx.summary[p.id] || {}).byCat); });
+  const capital = open.reduce((s, p) => s + deals[p.id].purchase + deals[p.id].rehabSpent, 0);
+  const projProfit = open.reduce((s, p) => s + (deals[p.id].arv ? deals[p.id].profit : 0), 0);
+  const liveLeads = ctx.leads.filter((l) => l.stage !== "Closed" && l.stage !== "Dead");
+  const dueLeads = liveLeads.filter((l) => !!l.nextFollowUp && todayISO() >= dateOnly(l.nextFollowUp));
+  const genSpent = ((ctx.summary["general-expenses"] || {}).byCat) ? Object.values(ctx.summary["general-expenses"].byCat).reduce((a, b) => a + num(b), 0) : 0;
+  const mgmtOpen = (ctx.mgmt.mgmtTasks || []).filter((t) => t.status !== "Done").length;
+  const hour = new Date().getHours();
+  const greet = hour >= 17 ? "Good evening" : hour >= 12 ? "Good afternoon" : "Good morning";
+
+  return e("div", null,
+    e(PageHead, { eyebrow: greet + ", " + CONFIG.companyShort, title: "Projects", sub: open.length + " open · " + real.filter((p) => p.status === "Sold").length + " sold",
+      actions: [e("button", { key: "n", style: S.btn(), onClick: () => ctx.openModal("project") }, "+ New Project")] }),
+    e("div", { className: "bf-kpis" },
+      e(Stat, { label: "Open Projects", value: open.length }),
+      e(Stat, { label: "Capital Deployed", value: money(capital), sub: "purchase + rehab spent" }),
+      e(Stat, { label: "Projected Profit", value: money(projProfit), color: projProfit >= 0 ? C.green : C.red, sub: "open projects" }),
+      e(Stat, { label: "Live Seller Leads", value: liveLeads.length, sub: dueLeads.length ? dueLeads.length + " follow-up" + (dueLeads.length === 1 ? "" : "s") + " due" : "none due", color: dueLeads.length ? C.amber : T.text })),
+
+    e("div", { className: "bf-click", onClick: () => ctx.go("management"), style: Object.assign({}, S.card, { background: "linear-gradient(135deg," + CONFIG.primaryColor + "," + T.cardAlt + ")", border: "1px solid " + GOLD + "66", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }) },
+      e("div", { style: { fontSize: 26 } }, "🏢"),
+      e("div", { style: { flex: 1, minWidth: 180 } },
+        e("div", { style: S.h2 }, CONFIG.managementLabel + " · " + CONFIG.pipelineLabel),
+        e("div", { style: Object.assign({}, S.sub, { fontSize: 12.5, marginTop: 3 }) }, liveLeads.length + " live leads · " + mgmtOpen + " company tasks · " + money(genSpent) + " general expenses")),
+      e("span", { style: { color: GOLD, fontWeight: 700, fontSize: 13 } }, "Open →")),
+
+    e(Chips, { value: filter, onChange: setFilter, options: ["Open", "Sold", "All"] }),
+    shown.length ? e("div", { className: "bf-grid" }, shown.map((p) =>
+      e(ProjectCard, { key: p.id, project: p, deal: deals[p.id], openTasks: (ctx.summary[p.id] || {}).openTasks || 0, onOpen: () => ctx.openProject(p.id) })))
+      : e(Empty, { icon: "🏠", title: filter === "Sold" ? "No sold projects yet" : "No projects yet", text: "Add a property, or convert an accepted seller lead from the " + CONFIG.pipelineLabel + ".", action: e("button", { style: S.btn(), onClick: () => ctx.openModal("project") }, "+ New Project") })
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  MANAGEMENT — pipeline, company tasks, milestones, general expenses
+// ════════════════════════════════════════════════════════════════════
+function LeadCard({ lead, ctx }) {
+  const color = LEAD_STAGE_COLORS[lead.stage] || T.muted;
+  const mao = calcMAO(lead.arv, lead.repairEst);
+  const stages = CONFIG.leadStages;
+  const idx = stages.indexOf(lead.stage);
+  const due = lead.nextFollowUp && lead.stage !== "Closed" && lead.stage !== "Dead";
+  const overdue = due && isOverdue(lead.nextFollowUp, false);
+  const today = due && dateOnly(lead.nextFollowUp) === todayISO();
+  const offerVsMao = num(lead.offerPrice) && num(lead.arv) ? num(lead.offerPrice) - mao : null;
+  const canConvert = (lead.stage === "Under Contract" || lead.stage === "Closed") && !lead.projectId;
+  const move = (dir) => { const n = stages[idx + dir]; if (n) ctx.saveLead(Object.assign({}, lead, { stage: n })); };
+
+  return e("div", { style: Object.assign({}, S.card, { marginBottom: 0, borderLeft: "3px solid " + color }) },
+    e("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, alignItems: "flex-start" } },
+      e("div", { style: { minWidth: 0, cursor: "pointer" }, onClick: () => ctx.openModal("lead", lead) },
+        e("div", { style: S.h2 }, lead.address || "(no address)"),
+        e("div", { style: Object.assign({}, S.sub, { fontSize: 12.5, marginTop: 3 }) }, kids([lead.sellerName, lead.source]).join(" · "))),
+      e("span", { style: S.badge(color) }, lead.stage)),
+    e("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 } }, kids([
+      lead.situation ? e("span", { key: "s", style: S.badge(C.purple) }, lead.situation) : null,
+      lead.phone ? e("a", { key: "p", href: telHref(lead.phone), style: Object.assign(S.badge(C.cyan), { textDecoration: "none" }), onClick: (ev) => ev.stopPropagation() }, "📞 " + lead.phone) : null,
+      lead.email ? e("a", { key: "m", href: "mailto:" + lead.email, style: Object.assign(S.badge(C.blue), { textDecoration: "none" }) }, "✉ " + lead.email) : null,
+      lead.projectId ? e("span", { key: "pj", style: Object.assign(S.badge(C.green), { cursor: "pointer" }), onClick: () => ctx.openProject(lead.projectId) }, "→ Project") : null,
+    ])),
+    e("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6, marginTop: 12 } },
+      [["Asking", lead.askingPrice], ["Offer", lead.offerPrice], ["ARV", lead.arv], ["Repairs", lead.repairEst], ["MAO", num(lead.arv) ? mao : 0, GOLD]].map((x) =>
+        e("div", { key: x[0] }, e("div", { style: Object.assign({}, S.label, { fontSize: 9, marginBottom: 2 }) }, x[0]), e("div", { style: { fontWeight: 800, fontSize: 12.5, color: x[2] || T.text } }, num(x[1]) ? money(x[1]) : "—")))),
+    offerVsMao !== null ? e("div", { style: { fontSize: 12, marginTop: 8, color: offerVsMao > 0 ? C.amber : C.green, fontWeight: 600 } }, offerVsMao > 0 ? "Offer is " + money(offerVsMao) + " above MAO" : "Offer is " + money(-offerVsMao) + " under MAO") : null,
+    lead.notes ? e("div", { style: { fontSize: 12.5, color: T.body, marginTop: 8, lineHeight: 1.45 } }, lead.notes) : null,
+    e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" } },
+      due ? e("span", { style: { fontSize: 12, fontWeight: 700, color: overdue ? C.red : today ? C.amber : T.muted } }, (overdue ? "⚠ Overdue: " : today ? "Today: " : "Follow up ") + fmtDate(lead.nextFollowUp)) : e("span"),
+      e("div", { style: { display: "flex", gap: 6 } }, kids([
+        idx > 0 ? e("button", { key: "b", style: S.btn("small"), onClick: () => move(-1), title: "Previous stage" }, "←") : null,
+        idx >= 0 && stages.length - 1 > idx ? e("button", { key: "f", style: S.btn("small"), onClick: () => move(1), title: "Next stage" }, stages[idx + 1] + " →") : null,
+        canConvert ? e("button", { key: "c", style: Object.assign(S.btn("small"), { borderColor: GOLD, color: GOLD }), onClick: () => ctx.convertLead(lead) }, "Make Project") : null,
+        e("button", { key: "e", style: S.btn("small"), onClick: () => ctx.openModal("lead", lead) }, "Edit"),
+      ])))
+  );
+}
+
+function PipelineTab({ ctx }) {
+  const [stage, setStage] = useState("Live");
+  const [q, setQ] = useState("");
+  const counts = {}; ctx.leads.forEach((l) => { counts[l.stage] = (counts[l.stage] || 0) + 1; });
+  const live = (l) => l.stage !== "Closed" && l.stage !== "Dead";
+  let list = ctx.leads.filter((l) => stage === "Live" ? live(l) : stage === "All" ? true : l.stage === stage);
+  if (q.trim()) { const s = q.toLowerCase(); list = list.filter((l) => [l.address, l.sellerName, l.phone, l.notes, l.situation].join(" ").toLowerCase().indexOf(s) >= 0); }
+  list = list.slice().sort((a, b) => byDate(a.nextFollowUp, b.nextFollowUp));
+  const offersOut = ctx.leads.filter((l) => l.stage === "Offer Made").reduce((s, l) => s + num(l.offerPrice), 0);
+
+  return e("div", null,
+    e("div", { className: "bf-kpis" },
+      e(Stat, { label: "Live Leads", value: ctx.leads.filter(live).length }),
+      e(Stat, { label: "Offers Out", value: counts["Offer Made"] || 0, sub: money(offersOut) }),
+      e(Stat, { label: "Under Contract", value: counts["Under Contract"] || 0, color: GOLD }),
+      e(Stat, { label: "Closed", value: counts["Closed"] || 0, color: C.green })),
+    e("div", { style: { display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" } },
+      e("input", { placeholder: "Search address, seller, phone…", value: q, onChange: (ev) => setQ(ev.target.value), style: Object.assign({}, S.input, { flex: 1, minWidth: 200 }) }),
+      e("button", { style: S.btn(), onClick: () => ctx.openModal("lead") }, "+ New Lead")),
+    e(Chips, { value: stage, onChange: setStage, options: [{ value: "Live", label: "Live (" + ctx.leads.filter(live).length + ")" }].concat(CONFIG.leadStages.map((s) => ({ value: s, label: s + (counts[s] ? " (" + counts[s] + ")" : ""), color: LEAD_STAGE_COLORS[s] }))).concat([{ value: "All", label: "All" }]) }),
+    list.length ? e("div", { className: "bf-grid" }, list.map((l) => e(LeadCard, { key: l.id, lead: l, ctx: ctx })))
+      : e(Empty, { icon: "📬", title: "No leads here", text: "Seller leads from the website form land here automatically once the backend is connected." })
+  );
+}
+
+function TaskRow({ t, onCycle, onEdit, msLabel }) {
+  const done = t.status === "Done";
+  const overdue = isOverdue(t.dueDate, done);
+  const sc = TASK_STATUS_COLORS[t.status] || T.muted;
+  return e("div", { className: "bf-row", style: { display: "flex", alignItems: "center", gap: 12, padding: "11px 12px", borderBottom: "1px solid " + T.border, cursor: "pointer" }, onClick: onEdit },
+    e("button", { title: "Tap to change status", onClick: (ev) => { ev.stopPropagation(); onCycle(); }, style: { width: 24, height: 24, borderRadius: 7, border: "2px solid " + sc, background: done ? sc : "transparent", color: CONFIG.primaryColor, fontWeight: 900, fontSize: 13, cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 } }, done ? "✓" : t.status === "In Progress" ? e("span", { style: { width: 8, height: 8, borderRadius: 4, background: sc } }) : t.status === "Blocked" ? e("span", { style: { color: sc, fontSize: 12 } }, "!") : null),
+    e("div", { style: { flex: 1, minWidth: 0 } },
+      e("div", { style: { color: done ? T.label : T.text, fontWeight: 600, fontSize: 14, textDecoration: done ? "line-through" : "none" } }, t.task),
+      e("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", marginTop: 5, alignItems: "center" } }, kids([
+        e("span", { key: "st", style: S.badge(sc) }, t.status),
+        t.priority ? e("span", { key: "p", style: S.badge(PRIORITY_COLORS[t.priority] || T.muted) }, t.priority) : null,
+        t.category ? e("span", { key: "c", style: { fontSize: 11.5, color: T.muted } }, t.category) : null,
+        msLabel ? e("span", { key: "m", style: S.badge(C.purple) }, "◆ " + msLabel) : null,
+        t.assignee ? e("span", { key: "a", style: { fontSize: 11.5, color: T.muted } }, "@" + t.assignee) : null,
+      ]))),
+    t.dueDate ? e("div", { style: { fontSize: 12, fontWeight: 700, color: overdue ? C.red : T.muted, whiteSpace: "nowrap" } }, (overdue ? "⚠ " : "") + fmtDate(t.dueDate)) : null
+  );
+}
+
+const PRIORITY_RANK = (p) => { const i = CONFIG.taskPriorities.indexOf(p); return i === -1 ? 0 : i; };
+function sortTasks(list) {
+  return list.slice().sort((a, b) => {
+    const ad = a.status === "Done" ? 1 : 0, bd = b.status === "Done" ? 1 : 0;
+    if (ad !== bd) return ad - bd;
+    const dd = byDate(a.dueDate, b.dueDate); if (dd) return dd;
+    return PRIORITY_RANK(b.priority) - PRIORITY_RANK(a.priority);
+  });
+}
+const nextStatus = (s) => { const L = CONFIG.taskStatuses; const i = L.indexOf(s); return L[(i + 1) % L.length]; };
+
+function CompanyTasksTab({ ctx }) {
+  const [hideDone, setHideDone] = useState(true);
+  const tasks = ctx.mgmt.mgmtTasks || [];
+  const list = sortTasks(tasks.filter((t) => !hideDone || t.status !== "Done"));
+  return e("div", null,
+    e("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 12, flexWrap: "wrap" } },
+      e(Chips, { value: hideDone ? "open" : "all", onChange: (v) => setHideDone(v === "open"), options: [{ value: "open", label: "Open" }, { value: "all", label: "All" }] }),
+      e("button", { style: S.btn(), onClick: () => ctx.openModal("mgmtTask") }, "+ Company Task")),
+    list.length ? e("div", { style: Object.assign({}, S.card, { padding: 0, overflow: "hidden" }) }, list.map((t) =>
+      e(TaskRow, { key: t.id, t: t, onEdit: () => ctx.openModal("mgmtTask", t), onCycle: () => ctx.saveMgmtList("mgmtTasks", tasks.map((x) => x.id === t.id ? Object.assign({}, x, { status: nextStatus(x.status) }) : x)) })))
+      : e(Empty, { icon: "✅", title: "No company tasks", text: "LLC filings, marketing, bookkeeping — anything not tied to one property." }));
+}
+
+function CompanyMilestonesTab({ ctx }) {
+  const ms = (ctx.mgmt.mgmtMilestones || []).slice().sort((a, b) => byDate(a.date, b.date));
+  const cycle = (m) => { const i = MS_STATUS.indexOf(m.status || "upcoming"); ctx.saveMgmtList("mgmtMilestones", (ctx.mgmt.mgmtMilestones || []).map((x) => x.id === m.id ? Object.assign({}, x, { status: MS_STATUS[(i + 1) % 3] }) : x)); };
+  return e("div", null,
+    e("div", { style: { display: "flex", justifyContent: "flex-end", marginBottom: 12 } }, e("button", { style: S.btn(), onClick: () => ctx.openModal("mgmtMs") }, "+ Company Milestone")),
+    ms.length ? ms.map((m) => {
+      const st = m.status || "upcoming";
+      return e("div", { key: m.id, style: Object.assign({}, S.card, { display: "flex", gap: 14, alignItems: "center" }) },
+        e("div", { style: { textAlign: "center", minWidth: 56 } },
+          e("div", { style: { fontSize: 11, color: T.label, fontWeight: 700, textTransform: "uppercase" } }, fmtDate(m.date).split(" ")[0]),
+          e("div", { style: { fontSize: 22, fontWeight: 900, color: T.text } }, (fmtDate(m.date).split(" ")[1] || "").replace(",", ""))),
+        e("div", { style: { flex: 1, minWidth: 0, cursor: "pointer" }, onClick: () => ctx.openModal("mgmtMs", m) },
+          e("div", { style: S.h2 }, m.week),
+          m.notes ? e("div", { style: Object.assign({}, S.sub, { marginTop: 3 }) }, m.notes) : null),
+        e("span", { style: Object.assign(S.badge(MS_STATUS_COLORS[st]), { cursor: "pointer" }), onClick: () => cycle(m) }, st));
+    }) : e(Empty, { icon: "🎯", title: "No company milestones", text: "Quarterly goals, financing lines, hiring — track the big picture." }));
+}
+
+function ExpenseList({ expenses, onAdd, onEdit, showChart }) {
+  const [cat, setCat] = useState("All");
+  const cats = Array.from(new Set(expenses.map((x) => x.category).filter(Boolean)));
+  const list = expenses.filter((x) => cat === "All" || x.category === cat).slice().sort((a, b) => byDate(b.date, a.date));
+  const total = list.reduce((s, x) => s + num(x.amount), 0);
+  return e("div", null,
+    e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" } },
+      e("div", null, e("div", { style: S.label }, cat === "All" ? "Total" : cat), e("div", { style: { fontSize: 24, fontWeight: 900, color: T.text } }, money2(total))),
+      e("button", { style: S.btn(), onClick: onAdd }, "+ Expense")),
+    cats.length > 1 ? e(Chips, { value: cat, onChange: setCat, options: ["All"].concat(cats) }) : null,
+    list.length ? e("div", { style: Object.assign({}, S.card, { padding: 0, overflow: "hidden" }) }, list.map((x) =>
+      e("div", { key: x.id, className: "bf-row", style: { display: "flex", alignItems: "center", gap: 12, padding: "11px 14px", borderBottom: "1px solid " + T.border, cursor: "pointer" }, onClick: () => onEdit(x) },
+        e("div", { style: { flex: 1, minWidth: 0 } },
+          e("div", { style: { color: T.text, fontWeight: 600, fontSize: 14 } }, x.description || x.category),
+          e("div", { style: { fontSize: 12, color: T.muted, marginTop: 3 } }, kids([fmtDate(x.date), x.category, x.vendor]).join(" · "))),
+        e("div", { style: { fontWeight: 800, color: T.text, fontSize: 14, whiteSpace: "nowrap" } }, money2(x.amount)))))
+      : e(Empty, { icon: "🧾", title: "No expenses yet", text: "Log receipts as you go so the budget stays honest." }));
+}
+
+function ManagementView({ ctx }) {
+  const tab = ctx.mgmtTab;
+  const tabs = [["pipeline", CONFIG.pipelineLabel], ["tasks", "Company Tasks"], ["milestones", "Milestones"], ["expenses", "General Expenses"]];
+  return e("div", null,
+    e(PageHead, { eyebrow: CONFIG.managementLabel, title: tabs.find((t) => t[0] === tab)[1], sub: tab === "pipeline" ? "Seller leads → offers → contracts → projects. MAO = ARV × " + Math.round(CONFIG.maoPercent * 100) + "% − repairs." : null }),
+    e(Chips, { value: tab, onChange: ctx.setMgmtTab, options: tabs.map((t) => ({ value: t[0], label: t[1] })) }),
+    tab === "pipeline" ? e(PipelineTab, { ctx }) :
+    tab === "tasks" ? e(CompanyTasksTab, { ctx }) :
+    tab === "milestones" ? e(CompanyMilestonesTab, { ctx }) :
+    e(ExpenseList, { expenses: ctx.genExpenses, onAdd: () => ctx.openModal("expense", null, "general-expenses"), onEdit: (x) => ctx.openModal("expense", x, "general-expenses") })
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  VENDORS
+// ════════════════════════════════════════════════════════════════════
+function VendorsView({ ctx }) {
+  const [cat, setCat] = useState("All");
+  const [q, setQ] = useState("");
+  const cats = ctx.vendorCats;
+  let all = [];
+  Object.keys(ctx.vendors).forEach((c) => (ctx.vendors[c] || []).forEach((v) => all.push(Object.assign({}, v, { category: c }))));
+  let list = all.filter((v) => cat === "All" || v.category === cat);
+  if (q.trim()) { const s = q.toLowerCase(); list = list.filter((v) => [v.name, v.phone, v.email, v.notes, v.category].join(" ").toLowerCase().indexOf(s) >= 0); }
+  list.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  const counts = {}; all.forEach((v) => { counts[v.category] = (counts[v.category] || 0) + 1; });
+  const usedCats = cats.filter((c) => counts[c]);
+
+  const addCat = () => ctx.openModal("vendorCat", { onAdded: setCat });
+
+  return e("div", null,
+    e(PageHead, { eyebrow: "Directory", title: "Vendors", sub: all.length + " contacts across " + usedCats.length + " categories",
+      actions: [e("button", { key: "c", style: S.btn("ghost"), onClick: addCat }, "+ Category"), e("button", { key: "v", style: S.btn(), onClick: () => ctx.openModal("vendor", cat !== "All" ? { category: cat } : null) }, "+ Vendor")] }),
+    e("input", { placeholder: "Search vendors…", value: q, onChange: (ev) => setQ(ev.target.value), style: Object.assign({}, S.input, { marginBottom: 12 }) }),
+    e(Chips, { value: cat, onChange: setCat, options: [{ value: "All", label: "All (" + all.length + ")" }].concat(cats.map((c) => ({ value: c, label: c + (counts[c] ? " (" + counts[c] + ")" : "") }))) }),
+    list.length ? e("div", { className: "bf-grid" }, list.map((v) =>
+      e("div", { key: v.category + v.id, className: "bf-click", style: Object.assign({}, S.card, { marginBottom: 0 }), onClick: () => ctx.openModal("vendor", v) },
+        e("div", { style: { display: "flex", justifyContent: "space-between", gap: 8 } },
+          e("div", { style: S.h2 }, v.name),
+          e("span", { style: S.badge(T.muted) }, v.category)),
+        e("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 } }, kids([
+          v.phone ? e("a", { key: "p", href: telHref(v.phone), onClick: (ev) => ev.stopPropagation(), style: Object.assign(S.badge(C.cyan), { textDecoration: "none" }) }, "📞 " + v.phone) : null,
+          v.email ? e("a", { key: "m", href: "mailto:" + v.email, onClick: (ev) => ev.stopPropagation(), style: Object.assign(S.badge(C.blue), { textDecoration: "none" }) }, "✉ " + v.email) : null])),
+        v.notes ? e("div", { style: { fontSize: 12.5, color: T.body, marginTop: 10, lineHeight: 1.45 } }, v.notes) : null)))
+      : e(Empty, { icon: "🧰", title: "No vendors here yet", text: "Save your go-to subs, title companies, and lenders." }));
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  PROJECT VIEWS
+// ════════════════════════════════════════════════════════════════════
+const PROJECT_TABS = [["dashboard", "Dashboard"], ["expenses", "Expenses"], ["tasks", "Tasks"], ["quotes", "Quotes"], ["planning", "Planning"]];
+
+function ProjectShell({ ctx, children }) {
+  const p = ctx.activeProject;
+  if (!p) return e(Empty, { title: "Project not found", action: e("button", { style: S.btn(), onClick: () => ctx.go("home") }, "Back to projects") });
+  return e("div", null,
+    e(PageHead, { eyebrow: kids([p.type, p.status]).join(" · "), title: p.name, sub: p.address && p.address !== p.name ? p.address : (p.description || null),
+      actions: [e("button", { key: "e", style: S.btn("ghost"), onClick: () => ctx.openModal("project", p) }, "Edit Project")] }),
+    e(Chips, { value: ctx.view, onChange: ctx.go, options: PROJECT_TABS.map((t) => ({ value: t[0], label: t[1] })) }),
+    ctx.projLoading ? e("div", { style: { display: "flex", justifyContent: "center", padding: 40 } }, e("div", { className: "bf-spin", style: { width: 26, height: 26 } })) : children
+  );
+}
+
+function DashboardView({ ctx }) {
+  const p = ctx.activeProject;
+  const byCat = {}; ctx.expenses.forEach((x) => { byCat[x.category] = (byCat[x.category] || 0) + num(x.amount); });
+  const d = calcDeal(p, byCat);
+  const used = pct(d.rehabSpent, d.budget);
+  const doneTasks = ctx.tasks.filter((t) => t.status === "Done").length;
+  const cats = Object.keys(byCat).map((k) => [k, byCat[k]]).sort((a, b) => b[1] - a[1]);
+  const maxCat = cats.length ? cats[0][1] : 0;
+  const ms = (ctx.milestones[p.id] || []).slice().sort((a, b) => byDate(a.date, b.date));
+  const nextMs = ms.filter((m) => dateOnly(m.date) >= todayISO()).slice(0, 3);
+  const urgent = sortTasks(ctx.tasks.filter((t) => t.status !== "Done")).slice(0, 5);
+  const FF = CONFIG.financialFields;
+  const line = (label, val, color, bold) => e("div", { style: { display: "flex", justifyContent: "space-between", padding: "6px 0", fontSize: 13.5, borderTop: bold ? "1px solid " + T.border : "none", marginTop: bold ? 6 : 0, paddingTop: bold ? 10 : 6 } },
+    e("span", { style: { color: bold ? T.text : T.muted, fontWeight: bold ? 800 : 500 } }, label), e("span", { style: { color: color || T.text, fontWeight: bold ? 900 : 700 } }, val));
+
+  return e("div", null,
+    e("div", { className: "bf-kpis" },
+      e(Stat, { label: FF.purchasePrice, value: money(d.purchase) }),
+      e(Stat, { label: FF.rehabBudget, value: money(d.budget), sub: money(d.rehabSpent) + " spent" }),
+      e(Stat, { label: "Budget Left", value: money(d.remaining), color: d.remaining >= 0 ? C.green : C.red }),
+      e(Stat, { label: FF.loanAmount, value: money(d.loan) }),
+      e(Stat, { label: FF.arvLabel, value: d.arv ? money(d.arv) : "—" }),
+      e(Stat, { label: "Proj. Profit", value: d.arv ? money(d.profit) : "—", color: d.profit >= 0 ? C.green : C.red, sub: d.arv ? d.roi.toFixed(1) + "% ROI" : "add ARV" })),
+
+    e("div", { className: "bf-grid", style: { gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" } },
+      e("div", { style: Object.assign({}, S.card, { marginBottom: 0 }) },
+        e("div", { style: Object.assign({}, S.h2, { marginBottom: 10 }) }, "Rehab budget"),
+        e("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 } },
+          e("span", { style: { color: T.muted } }, money(d.rehabSpent) + " of " + money(d.budget)),
+          e("span", { style: { fontWeight: 800, color: used >= 100 ? C.red : T.text } }, used + "%")),
+        e(Bar, { value: used, height: 10, color: used >= 100 ? C.red : (used >= 85 ? C.amber : GOLD) }),
+        e("div", { style: { marginTop: 16 } }, cats.length ? cats.map((c) =>
+          e("div", { key: c[0], style: { marginBottom: 9 } },
+            e("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 12.5, marginBottom: 4 } },
+              e("span", { style: { color: CONFIG.nonRehabCategories.indexOf(c[0]) >= 0 ? T.label : T.body } }, c[0] + (CONFIG.nonRehabCategories.indexOf(c[0]) >= 0 ? " (non-rehab)" : "")),
+              e("span", { style: { color: T.text, fontWeight: 700 } }, money(c[1]))),
+            e(Bar, { value: pct(c[1], maxCat), height: 5, color: CONFIG.nonRehabCategories.indexOf(c[0]) >= 0 ? T.label : GOLD })))
+          : e("div", { style: S.sub }, "No expenses logged yet."))),
+
+      e("div", { style: Object.assign({}, S.card, { marginBottom: 0 }) },
+        e("div", { style: Object.assign({}, S.h2, { marginBottom: 10 }) }, "Deal math"),
+        line(FF.arvLabel, d.arv ? money(d.arv) : "—"),
+        line("− " + FF.purchasePrice, money(d.purchase)),
+        line("− Rehab (greater of budget/spent)", money(d.projRehab)),
+        line("− Closing costs", money(d.closing)),
+        line("− Carrying costs", money(d.carrying)),
+        line("− Selling costs (est. " + Math.round(CONFIG.sellingCostPct * 100) + "%)", money(d.estSelling)),
+        line("Projected profit", d.arv ? money(d.profit) : "Add ARV", d.profit >= 0 ? C.green : C.red, true),
+        e("div", { style: { fontSize: 11.5, color: T.label, marginTop: 10, lineHeight: 1.5 } }, "Est. cash in: " + money(d.cashIn) + " (costs above loan). Acquisition entries (EMD, down payment) are part of the purchase price and aren't counted twice.")),
+
+      e("div", { style: Object.assign({}, S.card, { marginBottom: 0 }) },
+        e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 } },
+          e("div", { style: S.h2 }, "Tasks"),
+          e("span", { style: { fontSize: 12.5, color: T.muted } }, doneTasks + "/" + ctx.tasks.length + " done")),
+        e(Bar, { value: pct(doneTasks, ctx.tasks.length), color: C.green }),
+        e("div", { style: { marginTop: 10 } }, urgent.length ? urgent.map((t) =>
+          e("div", { key: t.id, style: { display: "flex", justifyContent: "space-between", gap: 8, padding: "7px 0", borderBottom: "1px solid " + T.border, fontSize: 13, cursor: "pointer" }, onClick: () => ctx.go("tasks") },
+            e("span", { style: { color: T.text } }, e("span", { style: { color: TASK_STATUS_COLORS[t.status] } }, "● "), t.task),
+            t.dueDate ? e("span", { style: { color: isOverdue(t.dueDate) ? C.red : T.muted, fontWeight: 600, whiteSpace: "nowrap" } }, fmtDate(t.dueDate)) : null))
+          : e("div", { style: S.sub }, "All caught up."))),
+
+      e("div", { style: Object.assign({}, S.card, { marginBottom: 0 }) },
+        e("div", { style: Object.assign({}, S.h2, { marginBottom: 10 }) }, "Upcoming milestones"),
+        nextMs.length ? nextMs.map((m) =>
+          e("div", { key: m.id, style: { display: "flex", gap: 10, padding: "7px 0", borderBottom: "1px solid " + T.border, fontSize: 13, cursor: "pointer" }, onClick: () => ctx.go("planning") },
+            e("span", { style: { color: C.purple, fontWeight: 800, minWidth: 54 } }, fmtDate(m.date)),
+            e("span", { style: { color: T.text } }, m.week)))
+          : e("div", { style: S.sub }, "No upcoming milestones — add them in Planning.")))
+  );
+}
+
+function ExpensesView({ ctx }) {
+  return e(ExpenseList, { expenses: ctx.expenses, onAdd: () => ctx.openModal("expense", null, ctx.activeId), onEdit: (x) => ctx.openModal("expense", x, ctx.activeId) });
+}
+
+function TasksView({ ctx }) {
+  const [status, setStatus] = useState("Open");
+  const [cat, setCat] = useState("");
+  const ms = ctx.milestones[ctx.activeId] || [];
+  const msName = {}; ms.forEach((m) => { msName[m.id] = m.week; });
+  let list = ctx.tasks.filter((t) => status === "All" ? true : status === "Open" ? t.status !== "Done" : t.status === status);
+  if (cat) list = list.filter((t) => t.category === cat);
+  list = sortTasks(list);
+  const counts = {}; ctx.tasks.forEach((t) => { counts[t.status] = (counts[t.status] || 0) + 1; });
+  return e("div", null,
+    e("div", { style: { display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" } },
+      e("select", { value: cat, onChange: (ev) => setCat(ev.target.value), style: Object.assign({}, S.input, { width: "auto", minWidth: 170, flex: 1 }) },
+        e("option", { value: "" }, "All categories"), CONFIG.taskCategories.map((c) => e("option", { key: c, value: c }, c))),
+      e("button", { style: S.btn(), onClick: () => ctx.openModal("task") }, "+ Task")),
+    e(Chips, { value: status, onChange: setStatus, options: [{ value: "Open", label: "Open (" + ctx.tasks.filter((t) => t.status !== "Done").length + ")" }].concat(CONFIG.taskStatuses.map((s) => ({ value: s, label: s + (counts[s] ? " (" + counts[s] + ")" : ""), color: TASK_STATUS_COLORS[s] }))).concat([{ value: "All", label: "All" }]) }),
+    list.length ? e("div", { style: Object.assign({}, S.card, { padding: 0, overflow: "hidden" }) }, list.map((t) =>
+      e(TaskRow, { key: t.id, t: t, msLabel: msName[t.milestone], onEdit: () => ctx.openModal("task", t), onCycle: () => ctx.saveTask(Object.assign({}, t, { status: nextStatus(t.status) }), true) })))
+      : e(Empty, { icon: "✅", title: "No tasks here", text: "Tap a task's box to cycle To Do → In Progress → Blocked → Done." }));
+}
+
+function QuotesView({ ctx }) {
+  const groups = {};
+  ctx.quotes.forEach((q) => { const k = String(q.item || "Other").trim(); (groups[k] = groups[k] || []).push(q); });
+  const keys = Object.keys(groups).sort();
+  return e("div", null,
+    e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" } },
+      e("div", { style: S.sub }, "Group bids by item. Accepting one rejects the other pending bids and logs it as an expense."),
+      e("button", { style: S.btn(), onClick: () => ctx.openModal("quote") }, "+ Quote")),
+    keys.length ? keys.map((k) => {
+      const qs = groups[k].slice().sort((a, b) => num(a.amount) - num(b.amount));
+      const live = qs.filter((q) => q.status !== "Rejected");
+      const low = live.length ? live[0].id : null;
+      const accepted = qs.find((q) => q.status === "Accepted");
+      return e("div", { key: k, style: S.card },
+        e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 } },
+          e("div", { style: S.h2 }, k),
+          accepted ? e("span", { style: S.badge(C.green) }, "Awarded · " + money(accepted.amount)) : e("span", { style: S.badge(C.amber) }, qs.length + " bid" + (qs.length === 1 ? "" : "s"))),
+        qs.map((q) => {
+          const sc = q.status === "Accepted" ? C.green : q.status === "Rejected" ? "#64748b" : C.amber;
+          return e("div", { key: q.id, style: { display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderTop: "1px solid " + T.border, opacity: q.status === "Rejected" ? 0.55 : 1 } },
+            e("div", { style: { flex: 1, minWidth: 0, cursor: "pointer" }, onClick: () => ctx.openModal("quote", q) },
+              e("div", { style: { color: T.text, fontWeight: 700, fontSize: 14 } }, q.vendor || "(vendor)", !accepted && q.id === low && qs.length > 1 ? e("span", { style: Object.assign(S.badge(GOLD), { marginLeft: 8 }) }, "Lowest") : null),
+              q.notes ? e("div", { style: { fontSize: 12, color: T.muted, marginTop: 2 } }, q.notes) : null),
+            e("div", { style: { fontWeight: 800, color: T.text, whiteSpace: "nowrap" } }, money(q.amount)),
+            q.status === "Pending" ? e("button", { style: Object.assign(S.btn("small"), { borderColor: C.green, color: C.green }), onClick: () => ctx.acceptQuote(q) }, "Accept") : e("span", { style: S.badge(sc) }, q.status));
+        }));
+    }) : e(Empty, { icon: "💬", title: "No quotes yet", text: "Collect 2–3 bids per trade and compare them side by side." }));
+}
+
+function PlanningView({ ctx }) {
+  const ms = (ctx.milestones[ctx.activeId] || []).slice().sort((a, b) => byDate(a.date, b.date));
+  return e("div", null,
+    e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" } },
+      e("div", { style: S.sub }, "Phase timeline. Link tasks to a milestone to track progress."),
+      e("button", { style: S.btn(), onClick: () => ctx.openModal("milestone") }, "+ Milestone")),
+    ms.length ? e("div", { style: { position: "relative", paddingLeft: 22 } },
+      e("div", { style: { position: "absolute", left: 6, top: 8, bottom: 8, width: 2, background: T.border } }),
+      ms.map((m) => {
+        const linked = ctx.tasks.filter((t) => t.milestone === m.id);
+        const done = linked.filter((t) => t.status === "Done").length;
+        const complete = linked.length > 0 && done === linked.length;
+        const past = todayISO() > dateOnly(m.date);
+        const dot = complete ? C.green : past ? C.red : C.purple;
+        return e("div", { key: m.id, style: { position: "relative", marginBottom: 12 } },
+          e("div", { style: { position: "absolute", left: -21, top: 18, width: 12, height: 12, borderRadius: 6, background: dot, border: "2px solid " + T.bg } }),
+          e("div", { className: "bf-click", style: Object.assign({}, S.card, { marginBottom: 0 }), onClick: () => ctx.openModal("milestone", m) },
+            e("div", { style: { display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" } },
+              e("div", { style: S.h2 }, m.week),
+              e("span", { style: { fontSize: 12.5, fontWeight: 800, color: past && !complete ? C.red : C.purple, whiteSpace: "nowrap" } }, fmtDate(m.date))),
+            (m.items || []).length ? e("div", { style: { marginTop: 8 } }, m.items.map((it, i) =>
+              e("div", { key: i, style: { fontSize: 13, color: T.body, padding: "3px 0" } }, it.type ? e("span", { style: Object.assign(S.badge(C.cyan), { marginRight: 6, fontSize: 10 }) }, it.type) : null, it.text))) : null,
+            linked.length ? e("div", { style: { marginTop: 10 } },
+              e("div", { style: { fontSize: 12, color: T.muted, marginBottom: 4 } }, done + "/" + linked.length + " linked tasks done"),
+              e(Bar, { value: pct(done, linked.length), color: C.green })) : null));
+      }))
+      : e(Empty, { icon: "🗓", title: "No milestones yet", text: "E.g. Demo & Cleanout → Rough-ins → Finishes → List." }));
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════════════════════════
+function Sidebar({ ctx }) {
+  const real = ctx.projects.filter((p) => !isGeneral(p));
+  const open = real.filter((p) => p.status !== "Sold"), sold = real.filter((p) => p.status === "Sold");
+  const item = (label, active, onClick, icon, indent) => e("div", { key: label, style: S.sideItem(active, indent), onClick: onClick }, icon ? e("span", { style: { width: 16, textAlign: "center" } }, icon) : null, e("span", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, label));
+  const projItem = (p) => e(React.Fragment, { key: p.id },
+    item(p.name, ctx.activeId === p.id && ctx.view === "dashboard", () => ctx.openProject(p.id), "🏠"),
+    ctx.activeId === p.id ? PROJECT_TABS.slice(1).map((t) => item(t[1], ctx.view === t[0], () => ctx.go(t[0]), null, true)) : null);
+  return e("div", { className: "desktop-sidebar", style: S.sidebar },
+    e("div", { style: S.sideLabel }, "Navigate"),
+    item("Projects", ctx.view === "home", () => ctx.go("home"), "▦"),
+    item(CONFIG.managementLabel, ctx.view === "management", () => ctx.go("management"), "🏢"),
+    ctx.view === "management" ? [["pipeline", CONFIG.pipelineLabel], ["tasks", "Company Tasks"], ["milestones", "Milestones"], ["expenses", "General Expenses"]].map((t) => item(t[1], ctx.mgmtTab === t[0], () => ctx.setMgmtTab(t[0]), null, true)) : null,
+    item("Vendors", ctx.view === "vendors", () => ctx.go("vendors"), "🧰"),
+    e("div", { style: S.sideLabel }, "Open Projects"),
+    open.length ? open.map(projItem) : e("div", { style: { fontSize: 12, color: T.label, padding: "4px 16px" } }, "None yet"),
+    sold.length ? e("div", { style: S.sideLabel }, "Sold") : null,
+    sold.map(projItem),
+    e("div", { style: { flex: 1 } }),
+    e("div", { style: { padding: "12px 16px", borderTop: "1px solid " + T.border, display: "flex", justifyContent: "space-between", alignItems: "center" } },
+      e("a", { href: telHref(CONFIG.phone), style: { fontSize: 11.5, color: T.label, textDecoration: "none" } }, CONFIG.phone),
+      e("button", { style: S.btn("small"), onClick: ctx.lock }, "🔒 Lock")));
+}
+
+function BottomNav({ ctx }) {
+  const projActive = !!ctx.activeId && PROJECT_TABS.some((t) => t[0] === ctx.view);
+  const items = kids([
+    ["home", "▦", "Projects", ctx.view === "home", () => ctx.go("home")],
+    projActive ? ["proj", "🏠", "Project", true, () => ctx.go("dashboard")] : null,
+    ["management", "🏢", CONFIG.managementLabel, ctx.view === "management", () => ctx.go("management")],
+    ["vendors", "🧰", "Vendors", ctx.view === "vendors", () => ctx.go("vendors")],
+    ["lock", "🔒", "Lock", false, ctx.lock],
+  ]);
+  return e("div", { className: "bottom-nav", style: { position: "fixed", left: 0, right: 0, bottom: 0, background: T.cardAlt, borderTop: "1px solid " + T.border, paddingBottom: "env(safe-area-inset-bottom)", zIndex: 500, justifyContent: "space-around" } },
+    items.map((it) => e("div", { key: it[0], onClick: it[4], style: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, padding: "8px 0 7px", cursor: "pointer", color: it[3] ? GOLD : T.muted, fontSize: 10.5, fontWeight: it[3] ? 800 : 600 } },
+      e("span", { style: { fontSize: 18 } }, it[1]), it[2])));
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  APP
+// ════════════════════════════════════════════════════════════════════
+function App() {
+  // ── state (all hooks first) ──
+  const [authed, setAuthed] = useState(false);
+  const [view, setView] = useState("home");
+  const [mgmtTab, setMgmtTab] = useState("pipeline");
+  const [activeId, setActiveId] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [summary, setSummary] = useState({});
+  const [expenses, setExpenses] = useState([]);
+  const [genExpenses, setGenExpenses] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [quotes, setQuotes] = useState([]);
+  const [milestones, setMilestones] = useState({});
+  const [vendors, setVendors] = useState({});
+  const [vendorCats, setVendorCats] = useState(CONFIG.vendorCategories);
+  const [mgmt, setMgmt] = useState({ mgmtTasks: [], mgmtMilestones: [] });
+  const [leads, setLeads] = useState([]);
+  const [modal, setModal] = useState(null);
+  const [toastMsg, setToastMsg] = useState(null);
+  const [busy, setBusy] = useState(0);
+  const [booting, setBooting] = useState(false);
+  const [projLoading, setProjLoading] = useState(false);
+  const [reloadTick, setReloadTick] = useState(0);
+  const loadedRef = useRef({ milestones: false, vendors: false, mgmt: false });
+  const reqRef = useRef(0);
+  const toastTimer = useRef(null);
+  const contentRef = useRef(null);
+
+  const toast = (msg, kind) => {
+    setToastMsg({ msg, kind });
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMsg(null), kind === "error" ? 4500 : 2200);
+  };
+  const track = async (p) => { setBusy((b) => b + 1); try { return await p; } finally { setBusy((b) => b - 1); } };
+
+  // ── load core data on auth ──
+  const loadSummary = () => api("getSummary").then((r) => setSummary(r.summary || {})).catch(() => {});
+  const loadLeads = () => api("getLeads").then((r) => setLeads(r.leads || []));
+  const loadCore = async () => {
+    setBooting(true);
+    try {
+      const res = await Promise.all([api("getProjects"), api("getMilestones"), api("getVendors"), api("getMgmtData"), api("getLeads"), api("getSummary")]);
+      setProjects(res[0].projects || []);
+      setMilestones(res[1].milestones || {}); loadedRef.current.milestones = true;
+      const vcats = res[2].categories && res[2].categories.length ? res[2].categories : CONFIG.vendorCategories;
+      const vv = res[2].vendors || {};
+      Object.keys(vv).forEach((c) => { if (vcats.indexOf(c) === -1) vcats.push(c); });
+      setVendors(vv); setVendorCats(vcats); loadedRef.current.vendors = true;
+      const md = res[3].data || {};
+      setMgmt({ mgmtTasks: md.mgmtTasks || [], mgmtMilestones: md.mgmtMilestones || [] }); loadedRef.current.mgmt = true;
+      setLeads(res[4].leads || []);
+      setSummary(res[5].summary || {});
+    } catch (err) { toast(err.message, "error"); }
+    setBooting(false);
+  };
+  useEffect(() => { if (authed) loadCore(); }, [authed]);
+
+  // ── per-project data ──
+  useEffect(() => {
+    if (!authed || !activeId) return;
+    const my = ++reqRef.current;
+    setProjLoading(true);
+    Promise.all([api("getExpenses", { projectId: activeId }), api("getTasks", { projectId: activeId }), api("getQuotes", { projectId: activeId })])
+      .then((r) => { if (my !== reqRef.current) return; setExpenses(r[0].expenses || []); setTasks(r[1].tasks || []); setQuotes(r[2].quotes || []); })
+      .catch((err) => toast(err.message, "error"))
+      .then(() => { if (my === reqRef.current) setProjLoading(false); });
+  }, [authed, activeId, reloadTick]);
+
+  useEffect(() => {
+    if (!authed || view !== "management") return;
+    api("getExpenses", { projectId: "general-expenses" }).then((r) => setGenExpenses(r.expenses || [])).catch((err) => toast(err.message, "error"));
+  }, [authed, view, reloadTick]);
+
+  useEffect(() => { if (contentRef.current) contentRef.current.scrollTop = 0; }, [view, activeId]);
+
+  // ── navigation ──
+  const go = (v) => {
+    if (v === "home" || v === "management" || v === "vendors") { setActiveId(null); setExpenses([]); setTasks([]); setQuotes([]); }
+    setView(v);
+  };
+  const openProject = (id) => { setExpenses([]); setTasks([]); setQuotes([]); setActiveId(id); setView("dashboard"); setReloadTick((t) => t + 1); };
+  const lock = () => { SESSION_PIN = ""; setAuthed(false); setActiveId(null); setView("home"); setProjects([]); setLeads([]); };
+  const openModal = (type, data, projectId) => setModal({ type, data: data || null, projectId: projectId || activeId });
+  const closeModal = () => setModal(null);
+
+  // ── persistence helpers ──
+  const reloadProject = (pid) => {
+    const id = pid || activeId;
+    if (id === "general-expenses") api("getExpenses", { projectId: id }).then((r) => setGenExpenses(r.expenses || []));
+    if (id && id === activeId) setReloadTick((t) => t + 1);
+    loadSummary();
+  };
+  const saveMilestonesFor = (pid, list) => {
+    if (!loadedRef.current.milestones) return Promise.resolve();
+    setMilestones((m) => Object.assign({}, m, { [pid]: list }));
+    return track(api("saveMilestones", { projectId: pid, milestones: list }));
+  };
+  const saveVendors = (v, cats) => {
+    if (!loadedRef.current.vendors) return Promise.resolve();
+    setVendors(v); setVendorCats(cats);
+    return track(api("saveVendors", { vendors: v, categories: cats })).catch((err) => toast(err.message, "error"));
+  };
+  const saveMgmtList = (key, val) => {
+    if (!loadedRef.current.mgmt) return Promise.resolve();
+    setMgmt((m) => Object.assign({}, m, { [key]: val }));
+    return track(api("saveMgmtData", { key, value: val })).catch((err) => toast(err.message, "error"));
+  };
+  const saveTask = async (t, quiet) => {
+    const isNew = !t.id;
+    const task = Object.assign({}, t, { id: t.id || genId("t") });
+    setTasks((list) => isNew ? list.concat([task]) : list.map((x) => x.id === task.id ? task : x));
+    try { await track(api(isNew ? "addTask" : "updateTask", { projectId: activeId, task })); loadSummary(); if (!quiet) toast(isNew ? "Task added" : "Task updated"); }
+    catch (err) { toast(err.message, "error"); setReloadTick((x) => x + 1); throw err; }
+  };
+  const saveLead = async (l) => {
+    const isNew = !l.id;
+    const lead = Object.assign({ createdAt: new Date().toISOString() }, l, { id: l.id || genId("lead"), updatedAt: new Date().toISOString() });
+    setLeads((list) => isNew ? [lead].concat(list) : list.map((x) => x.id === lead.id ? lead : x));
+    try { await track(api(isNew ? "addLead" : "updateLead", { lead })); }
+    catch (err) { toast(err.message, "error"); loadLeads(); throw err; }
+  };
+  const acceptQuote = async (q) => {
+    if (!(await askConfirm("Accept " + (q.vendor || "this quote") + " for " + money(q.amount) + "? Other pending bids for “" + q.item + "” will be rejected and an expense will be logged.", "Accept quote"))) return;
+    try { await track(api("acceptQuote", { projectId: activeId, quoteId: q.id })); toast("Quote accepted · expense logged"); reloadProject(); }
+    catch (err) { toast(err.message, "error"); }
+  };
+  const convertLead = async (lead) => {
+    const name = String(lead.address || "New Project").split(",")[0].trim();
+    let id = slugify(name), n = 2;
+    while (projects.some((p) => p.id === id)) id = slugify(name) + "-" + (n++);
+    const project = { id, name, description: "From lead · " + (lead.situation || lead.source || ""), address: lead.address || "", purchasePrice: num(lead.offerPrice), rehabBudget: num(lead.repairEst), loanAmount: 0, arv: num(lead.arv), status: "Under Contract", type: CONFIG.projectTypes[0], startDate: todayISO() };
+    try {
+      await track(api("addProject", { project }));
+      await saveLead(Object.assign({}, lead, { projectId: id }));
+      setProjects((ps) => ps.concat([project]));
+      toast("Project created from lead");
+      openProject(id);
+    } catch (err) { toast(err.message, "error"); }
+  };
+
+  const activeProject = projects.find((p) => p.id === activeId) || null;
+
+  // ── modal rendering ──
+  const renderModal = () => {
+    if (!modal) return null;
+    const d = modal.data;
+    const pid = modal.projectId;
+
+    if (modal.type === "project") {
+      return e(FormModal, { key: "m", title: d ? "Edit Project" : "New Project", initial: d || { type: CONFIG.projectTypes[0], status: "Under Contract" }, onClose: closeModal, wide: true,
+        fields: [
+          { key: "name", label: "Project name", required: true, placeholder: "e.g. 1208 Oak St" },
+          { key: "address", label: "Property address", placeholder: "Street, City, VA" },
+          { key: "type", label: "Type", type: "select", options: CONFIG.projectTypes, half: true },
+          { key: "status", label: "Status", type: "select", options: CONFIG.projectStatuses, half: true },
+          { key: "purchasePrice", label: CONFIG.financialFields.purchasePrice, type: "money", half: true },
+          { key: "rehabBudget", label: CONFIG.financialFields.rehabBudget, type: "money", half: true },
+          { key: "loanAmount", label: CONFIG.financialFields.loanAmount, type: "money", half: true },
+          { key: "arv", label: CONFIG.financialFields.arvLabel, type: "money", half: true },
+          { key: "startDate", label: "Start / closing date", type: "date", half: true },
+          { key: "description", label: "Notes", placeholder: "Lender, strategy, access codes…", half: true },
+        ],
+        preview: (v) => { const dd = calcDeal({ purchasePrice: num(v.purchasePrice), rehabBudget: num(v.rehabBudget), arv: num(v.arv), loanAmount: num(v.loanAmount) }, {}); return num(v.arv) ? e("div", { style: { fontSize: 12.5, color: T.muted, background: T.deep, padding: "10px 12px", borderRadius: 8 } }, "Quick check — projected profit ", e("b", { style: { color: dd.profit >= 0 ? C.green : C.red } }, money(dd.profit)), " · 70% rule MAO ", e("b", { style: { color: GOLD } }, money(calcMAO(v.arv, v.rehabBudget)))) : null; },
+        onDelete: d ? async () => {
+          await track(api("deleteProject", { projectId: d.id }));
+          setProjects((ps) => ps.filter((p) => p.id !== d.id));
+          closeModal(); go("home"); toast("Project deleted"); loadSummary();
+        } : null,
+        deleteConfirm: "Delete this project AND all of its expenses, tasks and quotes? This can't be undone.",
+        onSave: async (v) => {
+          if (d) {
+            const project = Object.assign({}, d, v);
+            await track(api("updateProject", { project }));
+            setProjects((ps) => ps.map((p) => p.id === d.id ? project : p));
+            toast("Project updated");
+          } else {
+            let id = slugify(v.name), n = 2;
+            while (projects.some((p) => p.id === id)) id = slugify(v.name) + "-" + (n++);
+            const project = Object.assign({ id }, v);
+            await track(api("addProject", { project }));
+            setProjects((ps) => ps.concat([project]));
+            toast("Project created");
+            closeModal(); openProject(id); return;
+          }
+          closeModal(); loadSummary();
+        } });
+    }
+
+    if (modal.type === "expense") {
+      const vendorNames = []; Object.keys(vendors).forEach((c) => (vendors[c] || []).forEach((v) => vendorNames.push(v.name)));
+      return e(FormModal, { key: "m", title: d ? "Edit Expense" : "Add Expense" + (pid === "general-expenses" ? " · General" : ""), initial: d || { date: todayISO(), category: pid === "general-expenses" ? "Miscellaneous" : "" }, onClose: closeModal,
+        fields: [
+          { key: "description", label: "Description", required: true, placeholder: "What was it for?" },
+          { key: "amount", label: "Amount", type: "money", required: true, half: true },
+          { key: "date", label: "Date", type: "date", half: true },
+          { key: "category", label: "Category", type: "select", options: CONFIG.expenseCategories, placeholder: "Select category…", required: true, half: true },
+          { key: "vendor", label: "Vendor", datalist: vendorNames, half: true },
+          { key: "notes", label: "Notes", type: "textarea", rows: 2 },
+        ],
+        onDelete: d ? async () => { await track(api("deleteExpense", { projectId: pid, expenseId: d.id })); closeModal(); toast("Expense deleted"); reloadProject(pid); } : null,
+        onSave: async (v) => {
+          if (!(v.amount > 0)) throw new Error("Enter an amount greater than 0");
+          const expense = Object.assign({}, d || {}, v, { id: d ? d.id : genId("exp"), projectId: pid });
+          await track(api(d ? "updateExpense" : "addExpense", { projectId: pid, expense }));
+          closeModal(); toast(d ? "Expense updated" : "Expense added"); reloadProject(pid);
+        } });
+    }
+
+    if (modal.type === "task") {
+      const ms = (milestones[activeId] || []).slice().sort((a, b) => byDate(a.date, b.date));
+      return e(FormModal, { key: "m", title: d ? "Edit Task" : "Add Task", initial: d || { status: CONFIG.taskStatuses[0], priority: "Medium", category: CONFIG.taskCategories[1] }, onClose: closeModal,
+        fields: kids([
+          { key: "task", label: "Task", required: true, placeholder: "e.g. Schedule final inspection" },
+          { key: "status", label: "Status", type: "select", options: CONFIG.taskStatuses, half: true },
+          { key: "priority", label: "Priority", type: "select", options: CONFIG.taskPriorities, half: true },
+          { key: "category", label: "Category", type: "select", options: CONFIG.taskCategories, half: true },
+          { key: "dueDate", label: "Due date", type: "date", half: true },
+          { key: "assignee", label: "Assignee", half: true, placeholder: "Who's on it?" },
+          ms.length ? { key: "milestone", label: "Milestone", type: "select", placeholder: "— none —", options: ms.map((m) => ({ value: m.id, label: fmtDate(m.date) + " — " + m.week })), half: true } : null,
+          { key: "notes", label: "Notes", type: "textarea", rows: 2 },
+        ]),
+        onDelete: d ? async () => { await track(api("deleteTask", { projectId: activeId, taskId: d.id })); setTasks((l) => l.filter((x) => x.id !== d.id)); closeModal(); toast("Task deleted"); loadSummary(); } : null,
+        onSave: async (v) => { await saveTask(Object.assign({}, d || {}, v)); closeModal(); } });
+    }
+
+    if (modal.type === "quote") {
+      const vendorNames = []; Object.keys(vendors).forEach((c) => (vendors[c] || []).forEach((v) => vendorNames.push(v.name)));
+      const items = Array.from(new Set(quotes.map((q) => q.item).filter(Boolean)));
+      return e(FormModal, { key: "m", title: d ? "Edit Quote" : "Add Quote", initial: d || { status: "Pending" }, onClose: closeModal,
+        fields: [
+          { key: "item", label: "Item / scope", required: true, datalist: items, placeholder: "e.g. Roof replacement", hint: "Use the same item name to compare bids side by side." },
+          { key: "vendor", label: "Vendor", required: true, datalist: vendorNames, half: true },
+          { key: "amount", label: "Amount", type: "money", required: true, half: true },
+          { key: "category", label: "Expense category", type: "select", options: CONFIG.expenseCategories, placeholder: "Select…", half: true },
+          { key: "status", label: "Status", type: "select", options: ["Pending", "Accepted", "Rejected"], half: true, hint: "Use the Accept button to also log the expense." },
+          { key: "notes", label: "Notes", type: "textarea", rows: 2 },
+        ],
+        onDelete: d ? async () => { await track(api("deleteQuote", { projectId: activeId, quoteId: d.id })); closeModal(); toast("Quote deleted"); reloadProject(); } : null,
+        onSave: async (v) => {
+          const quote = Object.assign({}, d || {}, v, { id: d ? d.id : genId("q"), projectId: activeId });
+          await track(api(d ? "updateQuote" : "addQuote", { projectId: activeId, quote }));
+          closeModal(); toast(d ? "Quote updated" : "Quote added"); reloadProject();
+        } });
+    }
+
+    if (modal.type === "milestone") {
+      const list = milestones[activeId] || [];
+      const itemsText = d ? (d.items || []).map((it) => (it.type ? it.type + ": " : "") + it.text).join("\n") : "";
+      return e(FormModal, { key: "m", title: d ? "Edit Milestone" : "Add Milestone", initial: Object.assign({ date: todayISO() }, d || {}, { itemsText }), onClose: closeModal,
+        fields: [
+          { key: "week", label: "Phase name", required: true, placeholder: "e.g. Demo & Cleanout", half: true },
+          { key: "date", label: "Target date", type: "date", required: true, half: true },
+          { key: "itemsText", label: "Deliverables (one per line)", type: "textarea", rows: 4, placeholder: "Interior: Full gut complete\nExterior: Dumpster removed", hint: "Optional 'Type:' prefix shows as a tag." },
+        ],
+        onDelete: d ? async () => { await saveMilestonesFor(activeId, list.filter((m) => m.id !== d.id)); closeModal(); toast("Milestone deleted"); } : null,
+        onSave: async (v) => {
+          const items = String(v.itemsText || "").split("\n").map((s) => s.trim()).filter(Boolean).map((s) => { const i = s.indexOf(":"); return i > 0 && 24 > i ? { type: s.slice(0, i).trim(), text: s.slice(i + 1).trim() } : { type: "", text: s }; });
+          const m = { id: d ? d.id : genId("ms"), date: v.date, week: v.week, items };
+          await saveMilestonesFor(activeId, d ? list.map((x) => x.id === d.id ? m : x) : list.concat([m]));
+          closeModal(); toast(d ? "Milestone updated" : "Milestone added");
+        } });
+    }
+
+    if (modal.type === "vendor") {
+      const isEdit = d && d.id;
+      return e(FormModal, { key: "m", title: isEdit ? "Edit Vendor" : "Add Vendor", initial: d || { category: vendorCats[0] }, onClose: closeModal,
+        fields: [
+          { key: "name", label: "Name", required: true },
+          { key: "category", label: "Category", type: "select", options: vendorCats, required: true, half: true },
+          { key: "phone", label: "Phone", type: "tel", half: true },
+          { key: "email", label: "Email", type: "email" },
+          { key: "notes", label: "Notes", type: "textarea", rows: 2, placeholder: "Rates, quality, who referred them…" },
+        ],
+        onDelete: isEdit ? async () => {
+          const nv = Object.assign({}, vendors); nv[d.category] = (nv[d.category] || []).filter((x) => x.id !== d.id);
+          await saveVendors(nv, vendorCats); closeModal(); toast("Vendor deleted");
+        } : null,
+        onSave: async (v) => {
+          const nv = Object.assign({}, vendors);
+          if (isEdit) nv[d.category] = (nv[d.category] || []).filter((x) => x.id !== d.id);
+          const rec = { id: isEdit ? d.id : genId("v"), name: v.name, phone: v.phone, email: v.email, notes: v.notes };
+          nv[v.category] = (nv[v.category] || []).concat([rec]);
+          await saveVendors(nv, vendorCats); closeModal(); toast(isEdit ? "Vendor updated" : "Vendor added");
+        } });
+    }
+
+    if (modal.type === "vendorCat") {
+      return e(FormModal, { key: "m", title: "New Vendor Category", onClose: closeModal, saveLabel: "Add category",
+        fields: [{ key: "name", label: "Category name", required: true, placeholder: "e.g. Concrete & Masonry" }],
+        onSave: async (v) => {
+          if (vendorCats.indexOf(v.name) >= 0) throw new Error("That category already exists");
+          await saveVendors(vendors, vendorCats.concat([v.name]));
+          if (d && d.onAdded) d.onAdded(v.name);
+          closeModal(); toast("Category added");
+        } });
+    }
+
+    if (modal.type === "mgmtTask") {
+      const list = mgmt.mgmtTasks || [];
+      return e(FormModal, { key: "m", title: d ? "Edit Company Task" : "Add Company Task", initial: d || { status: CONFIG.taskStatuses[0], priority: "Medium" }, onClose: closeModal,
+        fields: [
+          { key: "task", label: "Task", required: true },
+          { key: "status", label: "Status", type: "select", options: CONFIG.taskStatuses, half: true },
+          { key: "priority", label: "Priority", type: "select", options: CONFIG.taskPriorities, half: true },
+          { key: "dueDate", label: "Due date", type: "date", half: true },
+          { key: "assignee", label: "Assignee", half: true },
+          { key: "notes", label: "Notes", type: "textarea", rows: 2 },
+        ],
+        onDelete: d ? async () => { await saveMgmtList("mgmtTasks", list.filter((x) => x.id !== d.id)); closeModal(); toast("Task deleted"); } : null,
+        onSave: async (v) => {
+          const t = Object.assign({}, d || {}, v, { id: d ? d.id : genId("mt") });
+          await saveMgmtList("mgmtTasks", d ? list.map((x) => x.id === d.id ? t : x) : list.concat([t]));
+          closeModal(); toast(d ? "Task updated" : "Task added");
+        } });
+    }
+
+    if (modal.type === "mgmtMs") {
+      const list = mgmt.mgmtMilestones || [];
+      return e(FormModal, { key: "m", title: d ? "Edit Milestone" : "Add Company Milestone", initial: d || { date: todayISO(), status: "upcoming" }, onClose: closeModal,
+        fields: [
+          { key: "week", label: "Milestone", required: true, placeholder: "e.g. Close 3 flips in Q4" },
+          { key: "date", label: "Target date", type: "date", required: true, half: true },
+          { key: "status", label: "Status", type: "select", options: MS_STATUS, half: true },
+          { key: "notes", label: "Notes", type: "textarea", rows: 2 },
+        ],
+        onDelete: d ? async () => { await saveMgmtList("mgmtMilestones", list.filter((x) => x.id !== d.id)); closeModal(); toast("Milestone deleted"); } : null,
+        onSave: async (v) => {
+          const m = Object.assign({}, d || {}, v, { id: d ? d.id : genId("mm") });
+          await saveMgmtList("mgmtMilestones", d ? list.map((x) => x.id === d.id ? m : x) : list.concat([m]));
+          closeModal(); toast(d ? "Milestone updated" : "Milestone added");
+        } });
+    }
+
+    if (modal.type === "lead") {
+      return e(FormModal, { key: "m", title: d ? "Edit Seller Lead" : "New Seller Lead", wide: true, initial: d || { stage: CONFIG.leadStages[0], source: CONFIG.leadSources[0], nextFollowUp: todayISO() }, onClose: closeModal,
+        fields: [
+          { key: "address", label: "Property address", required: true, placeholder: "Street, City, VA" },
+          { key: "sellerName", label: "Seller name", half: true },
+          { key: "phone", label: "Phone", type: "tel", half: true },
+          { key: "email", label: "Email", type: "email", half: true },
+          { key: "situation", label: "Situation", type: "select", options: CONFIG.leadSituations, placeholder: "Select…", half: true },
+          { key: "source", label: "Lead source", type: "select", options: CONFIG.leadSources, half: true },
+          { key: "stage", label: "Stage", type: "select", options: CONFIG.leadStages, half: true },
+          { key: "askingPrice", label: "Asking price", type: "money", half: true },
+          { key: "offerPrice", label: "Our offer", type: "money", half: true },
+          { key: "arv", label: "ARV (est.)", type: "money", half: true },
+          { key: "repairEst", label: "Repair estimate", type: "money", half: true },
+          { key: "nextFollowUp", label: "Next follow-up", type: "date", half: true },
+          { key: "notes", label: "Notes", type: "textarea", rows: 3, placeholder: "Motivation, timeline, condition, occupancy…" },
+        ],
+        preview: (v) => num(v.arv) ? e("div", { style: { fontSize: 13, background: T.deep, padding: "10px 12px", borderRadius: 8, color: T.muted } },
+          "MAO (" + Math.round(CONFIG.maoPercent * 100) + "% of ARV − repairs): ", e("b", { style: { color: GOLD, fontSize: 15 } }, money(calcMAO(v.arv, v.repairEst))),
+          num(v.offerPrice) ? e("span", null, " · offer is ", e("b", { style: { color: num(v.offerPrice) > calcMAO(v.arv, v.repairEst) ? C.amber : C.green } }, money(Math.abs(num(v.offerPrice) - calcMAO(v.arv, v.repairEst))) + (num(v.offerPrice) > calcMAO(v.arv, v.repairEst) ? " over" : " under"))) : null) : null,
+        onDelete: d ? async () => { await track(api("deleteLead", { leadId: d.id })); setLeads((l) => l.filter((x) => x.id !== d.id)); closeModal(); toast("Lead deleted"); } : null,
+        onSave: async (v) => { await saveLead(Object.assign({}, d || {}, v)); closeModal(); toast(d ? "Lead updated" : "Lead added"); } });
+    }
+    return null;
+  };
+
+  // ── render ──
+  if (!authed) return e(Login, { onAuthed: () => setAuthed(true) });
+
+  const ctx = {
+    view, go, mgmtTab, setMgmtTab, activeId, activeProject, openProject, lock, openModal, toast,
+    projects, summary, expenses, genExpenses, tasks, quotes, milestones, vendors, vendorCats, mgmt, leads, projLoading,
+    saveVendors, saveMgmtList, saveTask, saveLead, acceptQuote, convertLead,
+  };
+
+  let body;
+  if (booting && !projects.length) body = e("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 80, gap: 14, color: T.muted } }, e("div", { className: "bf-spin", style: { width: 30, height: 30 } }), "Loading your projects…");
+  else if (view === "home") body = e(HomeView, { ctx });
+  else if (view === "management") body = e(ManagementView, { ctx });
+  else if (view === "vendors") body = e(VendorsView, { ctx });
+  else if (view === "dashboard") body = e(ProjectShell, { ctx }, e(DashboardView, { ctx }));
+  else if (view === "expenses") body = e(ProjectShell, { ctx }, e(ExpensesView, { ctx }));
+  else if (view === "tasks") body = e(ProjectShell, { ctx }, e(TasksView, { ctx }));
+  else if (view === "quotes") body = e(ProjectShell, { ctx }, e(QuotesView, { ctx }));
+  else if (view === "planning") body = e(ProjectShell, { ctx }, e(PlanningView, { ctx }));
+
+  return e("div", { style: S.root },
+    e(Header, { busy: busy > 0 || booting }),
+    e("div", { style: { display: "flex", flex: 1, minHeight: 0 } },
+      e(Sidebar, { ctx }),
+      e("div", { ref: contentRef, className: "bf-content", style: S.content },
+        e("div", { style: { maxWidth: 1180, margin: "0 auto" } }, body))),
+    e(BottomNav, { ctx }),
+    renderModal(),
+    e(ConfirmHost),
+    e(Toast, { toast: toastMsg })
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(e(App));
+
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("./sw.js").catch(() => {}); });
+}
+//]]>
+</script>
+</body>
+</html>
