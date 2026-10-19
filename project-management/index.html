@@ -17,7 +17,7 @@
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #0b1f17; }
-  body { -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: #c9d6cf; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
   #root { height: 100dvh; }
   button { font-family: inherit; }
   input, select, textarea { font-family: inherit; font-size: 16px; }
@@ -379,7 +379,15 @@ async function demoApi(action, x) {
   const list = (k, pid) => { db[k][pid] = db[k][pid] || []; return db[k][pid]; };
   let res = { success: true };
   switch (action) {
-    case "auth": break;
+    case "auth":
+      if (!db.pin) { res = { success: true, mustReset: true }; break; }          // demo: any PIN acts as the temporary PIN
+      if (String(x.pin) !== String(db.pin)) throw new Error("Unauthorized");
+      res = { success: true, mustReset: false }; break;
+    case "changePin": {
+      const err = pinProblem(x.newPin, x.pin); if (err) throw new Error(err);
+      if (db.pin && String(x.pin) !== String(db.pin)) throw new Error("Current PIN is incorrect");
+      db.pin = String(x.newPin); break;
+    }
     case "getProjects": res = { projects: clone(db.projects) }; break;
     case "addProject": case "updateProject": upsertIn(db.projects, x.project); break;
     case "deleteProject": db.projects = db.projects.filter((p) => p.id !== x.projectId); delete db.expenses[x.projectId]; delete db.tasks[x.projectId]; delete db.quotes[x.projectId]; break;
@@ -427,13 +435,25 @@ async function demoApi(action, x) {
 //  API
 // ════════════════════════════════════════════════════════════════════
 let SESSION_PIN = "";
+let onSessionExpired = null;   // set by App: kicks back to the PIN screen if the PIN was reset elsewhere
+// Same rules the server enforces — checked here first for instant feedback
+function pinProblem(next, current) {
+  next = String(next || "");
+  if (!/^\d{4,8}$/.test(next)) return "PIN must be 4–8 digits.";
+  if (current && next === String(current)) return "Choose a PIN different from the current one.";
+  if (/^(\d)\1+$/.test(next) || "0123456789".indexOf(next) >= 0 || "9876543210".indexOf(next) >= 0) return "Too easy to guess — avoid repeated or sequential digits.";
+  return "";
+}
 async function api(action, extra) {
   extra = extra || {};
   if (DEMO) return demoApi(action, extra);
   const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(Object.assign({ pin: SESSION_PIN, action: action }, extra)) });
   let data;
   try { data = await res.json(); } catch (err) { throw new Error("Server returned an unexpected response"); }
-  if (data && data.error) throw new Error(data.error);
+  if (data && data.error) {
+    if ((data.error === "Unauthorized" || data.error === "PIN_RESET_REQUIRED") && action !== "auth" && action !== "changePin" && onSessionExpired) onSessionExpired();
+    throw new Error(data.error);
+  }
   return data;
 }
 
@@ -581,7 +601,7 @@ function FormModal(props) {
         e("span", { style: { position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: T.label, fontSize: 15 } }, "$"),
         e("input", Object.assign({}, common, { inputMode: "decimal", placeholder: "0", style: Object.assign({}, S.input, { paddingLeft: 24 }) })));
     } else {
-      input = e("input", Object.assign({}, common, { type: f.type === "date" ? "date" : (f.type === "email" ? "email" : (f.type === "tel" ? "tel" : "text")), placeholder: f.placeholder || "", list: f.datalist ? "dl-" + f.key : undefined }));
+      input = e("input", Object.assign({}, common, { type: f.type === "date" ? "date" : (f.type === "email" ? "email" : (f.type === "tel" ? "tel" : (f.type === "pin" ? "password" : "text"))), placeholder: f.placeholder || "", list: f.datalist ? "dl-" + f.key : undefined, inputMode: f.type === "pin" ? "numeric" : undefined, autoComplete: f.type === "pin" ? (f.key === "current" ? "current-password" : "new-password") : undefined, maxLength: f.type === "pin" ? 8 : undefined }));
     }
     return e("div", { key: f.key, className: f.half ? "" : "bf-full" },
       e("label", { style: S.label, htmlFor: "f-" + f.key }, f.label + (f.required ? " *" : "")),
@@ -611,28 +631,65 @@ function FormModal(props) {
 //  Login
 // ════════════════════════════════════════════════════════════════════
 function Login(props) {
-  const [pin, setPin] = useState(DEMO ? "demo" : "");
-  const [err, setErr] = useState("");
+  const [stage, setStage] = useState("pin");           // "pin" → (temporary PIN) → "reset"
+  const [pin, setPin] = useState("");
+  const [newPin, setNewPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [err, setErr] = useState(props.notice || "");
   const [busy, setBusy] = useState(false);
+  const pinInput = { type: "password", inputMode: "numeric", maxLength: 8, style: Object.assign({}, S.input, { textAlign: "center", fontSize: 20, letterSpacing: "0.3em", padding: "14px 12px" }) };
+
   const submit = async (ev) => {
     ev.preventDefault();
     if (!pin) return;
     setBusy(true); setErr("");
     SESSION_PIN = pin;
-    try { await api("auth"); props.onAuthed(); }
-    catch (x) { SESSION_PIN = ""; setErr(x.message === "Unauthorized" ? "Incorrect PIN" : x.message); setBusy(false); }
+    try {
+      const r = await api("auth");
+      if (r.mustReset) { setStage("reset"); setBusy(false); return; }
+      props.onAuthed();
+    } catch (x) { SESSION_PIN = ""; setErr(x.message === "Unauthorized" ? "Incorrect PIN" : x.message); setBusy(false); }
   };
-  return e("div", { style: { minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "radial-gradient(1200px 600px at 50% -10%, " + CONFIG.primaryColor + ", " + T.bg + ")" } },
-    e("form", { onSubmit: submit, style: Object.assign({}, S.card, { width: "100%", maxWidth: 380, padding: 28, textAlign: "center" }) },
+
+  const submitReset = async (ev) => {
+    ev.preventDefault();
+    const problem = pinProblem(newPin, pin);
+    if (problem) { setErr(problem); return; }
+    if (newPin !== confirmPin) { setErr("PINs don't match"); return; }
+    setBusy(true); setErr("");
+    try { await api("changePin", { pin: pin, newPin: newPin }); SESSION_PIN = newPin; props.onAuthed("PIN updated — use your new PIN from now on"); }
+    catch (x) { setErr(x.message); setBusy(false); }
+  };
+
+  const resetDemo = () => { try { window.localStorage.removeItem(DEMO_KEY); } catch (x) {} demoDB = null; setErr(""); setPin(""); setStage("pin"); };
+
+  const shell = (children) => e("div", { style: { minHeight: "100%", height: "100%", overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "radial-gradient(1200px 600px at 50% -10%, " + CONFIG.primaryColor + ", " + T.bg + ")" } },
+    e("div", { style: Object.assign({}, S.card, { width: "100%", maxWidth: 380, padding: 28, textAlign: "center" }) },
       e("div", { style: { display: "flex", justifyContent: "center", marginBottom: 14 } }, e(LogoMark, { size: 56 })),
       e("h1", { style: Object.assign({}, S.h1, { fontSize: 22 }) }, CONFIG.companyName),
-      e("div", { style: Object.assign({}, S.sub, { marginTop: 4, marginBottom: 22 }) }, CONFIG.tagline),
-      e("input", { type: "password", inputMode: "numeric", autoComplete: "current-password", placeholder: "Enter PIN", value: pin, onChange: (ev) => setPin(ev.target.value), style: Object.assign({}, S.input, { textAlign: "center", fontSize: 20, letterSpacing: "0.3em", padding: "14px 12px" }) }),
+      children,
+      e("div", { style: { fontSize: 11, color: T.label, marginTop: 18 } }, "Powered by BuildFlow · Weblina LLC")));
+
+  if (stage === "reset") {
+    return shell(e("form", { onSubmit: submitReset },
+      e("div", { style: Object.assign({}, S.sub, { marginTop: 6, marginBottom: 18, lineHeight: 1.5 }) }, "You signed in with a temporary PIN. Choose your own 4–8 digit PIN to continue."),
+      e("label", { style: Object.assign({}, S.label, { textAlign: "left" }), htmlFor: "new-pin" }, "New PIN"),
+      e("input", Object.assign({ id: "new-pin", autoFocus: true, autoComplete: "new-password", value: newPin, onChange: (ev) => setNewPin(ev.target.value.replace(/\D/g, "")) }, pinInput)),
+      e("label", { style: Object.assign({}, S.label, { textAlign: "left", marginTop: 12 }), htmlFor: "confirm-pin" }, "Confirm new PIN"),
+      e("input", Object.assign({ id: "confirm-pin", autoComplete: "new-password", value: confirmPin, onChange: (ev) => setConfirmPin(ev.target.value.replace(/\D/g, "")) }, pinInput)),
       err ? e("div", { style: { color: "#fca5a5", fontSize: 13, marginTop: 10, fontWeight: 600 } }, err) : null,
-      e("button", { type: "submit", disabled: busy, style: Object.assign(S.btn(), { width: "100%", justifyContent: "center", marginTop: 14, padding: "13px 16px", fontSize: 15 }) }, busy ? "Checking…" : "Unlock"),
-      DEMO ? e("div", { style: { fontSize: 12, color: C.amber, marginTop: 14, lineHeight: 1.5 } }, "Demo mode — sample data stays in this browser. Connect the Worker URL to go live.") : null,
-      e("div", { style: { fontSize: 11, color: T.label, marginTop: 18 } }, "Powered by BuildFlow · Weblina LLC")
-    ));
+      e("button", { type: "submit", disabled: busy, style: Object.assign(S.btn(), { width: "100%", justifyContent: "center", marginTop: 14, padding: "13px 16px", fontSize: 15 }) }, busy ? "Saving…" : "Set PIN & continue"),
+      e("button", { type: "button", onClick: () => { SESSION_PIN = ""; setStage("pin"); setPin(""); setNewPin(""); setConfirmPin(""); setErr(""); }, style: Object.assign(S.btn("ghost"), { width: "100%", justifyContent: "center", marginTop: 8 }) }, "Back")));
+  }
+
+  return shell(e("form", { onSubmit: submit },
+    e("div", { style: Object.assign({}, S.sub, { marginTop: 4, marginBottom: 22 }) }, CONFIG.tagline),
+    e("input", Object.assign({ id: "login-pin", autoComplete: "current-password", placeholder: "Enter PIN", value: pin, onChange: (ev) => setPin(ev.target.value) }, pinInput)),
+    err ? e("div", { style: { color: err.indexOf("PIN updated") === 0 ? C.green : "#fca5a5", fontSize: 13, marginTop: 10, fontWeight: 600 } }, err) : null,
+    e("button", { type: "submit", disabled: busy, style: Object.assign(S.btn(), { width: "100%", justifyContent: "center", marginTop: 14, padding: "13px 16px", fontSize: 15 }) }, busy ? "Checking…" : "Unlock"),
+    e("div", { style: { fontSize: 12, color: T.muted, marginTop: 14, lineHeight: 1.5 } }, "First time or forgot your PIN? Ask your administrator for a temporary PIN."),
+    DEMO ? e("div", { style: { fontSize: 12, color: C.amber, marginTop: 10, lineHeight: 1.5 } }, "Demo: the first PIN you enter acts as a temporary PIN, then you choose your own. ",
+      e("button", { type: "button", onClick: resetDemo, style: { background: "none", border: "none", color: GOLD, textDecoration: "underline", cursor: "pointer", fontSize: 12, padding: 0 } }, "Reset demo")) : null));
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -1084,7 +1141,9 @@ function Sidebar({ ctx }) {
     e("div", { style: { flex: 1 } }),
     e("div", { style: { padding: "12px 16px", borderTop: "1px solid " + T.border, display: "flex", justifyContent: "space-between", alignItems: "center" } },
       e("a", { href: telHref(CONFIG.phone), style: { fontSize: 11.5, color: T.label, textDecoration: "none" } }, CONFIG.phone),
-      e("button", { style: S.btn("small"), onClick: ctx.lock }, "🔒 Lock")));
+      e("div", { style: { display: "flex", gap: 6 } },
+        e("button", { style: S.btn("small"), onClick: () => ctx.openModal("changePin") }, "PIN"),
+        e("button", { style: S.btn("small"), onClick: () => ctx.lock() }, "🔒 Lock"))));
 }
 
 function BottomNav({ ctx }) {
@@ -1094,7 +1153,7 @@ function BottomNav({ ctx }) {
     projActive ? ["proj", "🏠", "Project", true, () => ctx.go("dashboard")] : null,
     ["management", "🏢", CONFIG.managementLabel, ctx.view === "management", () => ctx.go("management")],
     ["vendors", "🧰", "Vendors", ctx.view === "vendors", () => ctx.go("vendors")],
-    ["lock", "🔒", "Lock", false, ctx.lock],
+    ["account", "👤", "Account", false, () => ctx.openModal("account")],
   ]);
   return e("div", { className: "bottom-nav", style: { position: "fixed", left: 0, right: 0, bottom: 0, background: T.cardAlt, borderTop: "1px solid " + T.border, paddingBottom: "env(safe-area-inset-bottom)", zIndex: 500, justifyContent: "space-around" } },
     items.map((it) => e("div", { key: it[0], onClick: it[4], style: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, padding: "8px 0 7px", cursor: "pointer", color: it[3] ? GOLD : T.muted, fontSize: 10.5, fontWeight: it[3] ? 800 : 600 } },
@@ -1107,6 +1166,7 @@ function BottomNav({ ctx }) {
 function App() {
   // ── state (all hooks first) ──
   const [authed, setAuthed] = useState(false);
+  const [loginNotice, setLoginNotice] = useState("");
   const [view, setView] = useState("home");
   const [mgmtTab, setMgmtTab] = useState("pipeline");
   const [activeId, setActiveId] = useState(null);
@@ -1185,7 +1245,8 @@ function App() {
     setView(v);
   };
   const openProject = (id) => { setExpenses([]); setTasks([]); setQuotes([]); setActiveId(id); setView("dashboard"); setReloadTick((t) => t + 1); };
-  const lock = () => { SESSION_PIN = ""; setAuthed(false); setActiveId(null); setView("home"); setProjects([]); setLeads([]); };
+  const lock = (notice) => { SESSION_PIN = ""; setModal(null); setLoginNotice(typeof notice === "string" ? notice : ""); setAuthed(false); setActiveId(null); setView("home"); setProjects([]); setLeads([]); };
+  onSessionExpired = () => lock("Your PIN was changed. Please sign in again.");
   const openModal = (type, data, projectId) => setModal({ type, data: data || null, projectId: projectId || activeId });
   const closeModal = () => setModal(null);
 
@@ -1401,6 +1462,31 @@ function App() {
         } });
     }
 
+    if (modal.type === "account") {
+      return e("div", { key: "m", style: { position: "fixed", inset: 0, background: "rgba(2,8,5,.72)", zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center" }, onMouseDown: (ev) => { if (ev.target === ev.currentTarget) closeModal(); } },
+        e("div", { className: "bf-modal", style: Object.assign({}, S.card, { width: "100%", maxWidth: 520, marginBottom: 0, borderRadius: "16px 16px 0 0", padding: "18px 16px calc(18px + env(safe-area-inset-bottom))", display: "flex", flexDirection: "column", gap: 10 }) },
+          e("div", { style: Object.assign({}, S.h2, { marginBottom: 4 }) }, CONFIG.companyName),
+          e("button", { type: "button", style: Object.assign(S.btn("ghost"), { justifyContent: "center", padding: "13px 16px", color: T.text }), onClick: () => setModal({ type: "changePin" }) }, "🔑 Change PIN"),
+          e("button", { type: "button", style: Object.assign(S.btn(), { justifyContent: "center", padding: "13px 16px" }), onClick: () => lock() }, "🔒 Lock app"),
+          e("button", { type: "button", style: Object.assign(S.btn("ghost"), { justifyContent: "center" }), onClick: closeModal }, "Close")));
+    }
+
+    if (modal.type === "changePin") {
+      return e(FormModal, { key: "m", title: "Change PIN", onClose: closeModal, saveLabel: "Update PIN",
+        fields: [
+          { key: "current", label: "Current PIN", type: "pin", required: true },
+          { key: "next", label: "New PIN", type: "pin", required: true, half: true, hint: "4–8 digits" },
+          { key: "confirm", label: "Confirm new PIN", type: "pin", required: true, half: true },
+        ],
+        onSave: async (v) => {
+          const problem = pinProblem(v.next, v.current); if (problem) throw new Error(problem);
+          if (v.next !== v.confirm) throw new Error("New PINs don't match");
+          try { await track(api("changePin", { pin: v.current, newPin: v.next })); }
+          catch (err) { throw new Error(err.message === "Unauthorized" ? "Current PIN is incorrect" : err.message); }
+          SESSION_PIN = v.next; closeModal(); toast("PIN updated");
+        } });
+    }
+
     if (modal.type === "mgmtTask") {
       const list = mgmt.mgmtTasks || [];
       return e(FormModal, { key: "m", title: d ? "Edit Company Task" : "Add Company Task", initial: d || { status: CONFIG.taskStatuses[0], priority: "Medium" }, onClose: closeModal,
@@ -1464,7 +1550,7 @@ function App() {
   };
 
   // ── render ──
-  if (!authed) return e(Login, { onAuthed: () => setAuthed(true) });
+  if (!authed) return e(Login, { notice: loginNotice, onAuthed: (msg) => { setLoginNotice(""); setAuthed(true); if (msg) toast(msg); } });
 
   const ctx = {
     view, go, mgmtTab, setMgmtTab, activeId, activeProject, openProject, lock, openModal, toast,
